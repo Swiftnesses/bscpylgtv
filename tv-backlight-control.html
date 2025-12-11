@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LG TV Backlight Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #a50034;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #8a002b;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .slider-group {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .value-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #a50034;
+            margin: 10px 0;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .status.info {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        .status.success {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        .status.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .status.warning {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .controls {
+            display: none;
+        }
+        .controls.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LG TV Backlight Control</h1>
+
+        <div class="input-group">
+            <label for="tvIp">TV IP Address:</label>
+            <input type="text" id="tvIp" placeholder="192.168.1.100" value="">
+        </div>
+
+        <div>
+            <button id="connectBtn" onclick="connect()">Connect</button>
+            <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+        </div>
+
+        <div id="status" class="status info" style="display: none;">
+            Ready to connect
+        </div>
+
+        <div id="controls" class="controls">
+            <div class="slider-group">
+                <label for="backlight">OLED Backlight:</label>
+                <div class="value-display" id="backlightValue">50</div>
+                <input type="range" id="backlight" min="0" max="100" value="50" oninput="updateBacklightDisplay(this.value)" onchange="setBacklight(this.value)">
+                <div style="display: flex; justify-content: space-between; color: #999; font-size: 12px;">
+                    <span>0</span>
+                    <span>100</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let messageId = 0;
+        let clientKey = null;
+        let connected = false;
+
+        const REGISTRATION_PAYLOAD = {
+            "forcePairing": false,
+            "manifest": {
+                "appVersion": "1.1",
+                "manifestVersion": 1,
+                "permissions": [
+                    "CONTROL_DISPLAY",
+                    "CONTROL_INPUT_JOYSTICK",
+                    "CONTROL_POWER",
+                    "READ_SETTINGS",
+                    "WRITE_SETTINGS",
+                    "READ_INSTALLED_APPS",
+                    "CONTROL_POWER",
+                    "READ_CURRENT_CHANNEL",
+                    "READ_RUNNING_APPS"
+                ],
+                "signatures": [{
+                    "signature": "eyJhbGdvcml0aG0iOiJSU0EtU0hBMjU2Iiwia2V5SWQiOiJ0ZXN0LXNpZ25pbmctY2VydCIsInNpZ25hdHVyZVZlcnNpb24iOjF9.hrVRgjCwXVvE2OOSpDZ58hR+59aFNwYDyjQgKk3auukd7pcegmE2CzPCa0bJ0ZsRAcKkCTJrWo5iDzNhMBWRyaMOv5zWSrthlf7G128qvIlpMT0YNY+n/FaOHE73uLrS/g7swl3/qH/BGFG2Hu4RlL48eb3lLKqTt2xKHdCs6Cd4RMfJPYnzgvI4BNrFUKsjkcu+WD4OO2A27Pq1n50cMchmcaXadJhGrOqH5YmHdOCj5NSHzJYrsW0HPlpuAx/ECMeIZYDh6RMqaFM2DXzdKX9NmmyqzJ3o/0lkk/N97gfVRLW5hA29yeAwaCViZNCP8iC9aO0q9fQojoa7NQnAtw==",
+                    "signatureVersion": 1
+                }],
+                "signed": {
+                    "appId": "com.lge.test",
+                    "created": "20140509",
+                    "localizedAppNames": {
+                        "": "LG Remote App",
+                        "ko-KR": "리모컨 앱",
+                        "zxx-XX": "ЛГ Rэмotэ AПП"
+                    },
+                    "localizedVendorNames": {"": "LG Electronics"},
+                    "permissions": [
+                        "TEST_SECURE",
+                        "CONTROL_INPUT_TEXT",
+                        "CONTROL_MOUSE_AND_KEYBOARD",
+                        "READ_INSTALLED_APPS",
+                        "READ_LGE_SDX",
+                        "READ_NOTIFICATIONS",
+                        "SEARCH",
+                        "WRITE_SETTINGS",
+                        "WRITE_NOTIFICATION_ALERT",
+                        "CONTROL_POWER",
+                        "READ_CURRENT_CHANNEL",
+                        "READ_RUNNING_APPS",
+                        "READ_UPDATE_INFO",
+                        "UPDATE_FROM_REMOTE_APP",
+                        "READ_LGE_TV_INPUT_EVENTS",
+                        "READ_TV_CURRENT_TIME"
+                    ],
+                    "serial": "2f930e2d2cfe083771f68e4fe7bb07",
+                    "vendorId": "com.lge"
+                }
+            },
+            "pairingType": "PROMPT"
+        };
+
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateUI(isConnected) {
+            connected = isConnected;
+            document.getElementById('connectBtn').disabled = isConnected;
+            document.getElementById('disconnectBtn').disabled = !isConnected;
+            document.getElementById('tvIp').disabled = isConnected;
+
+            if (isConnected) {
+                document.getElementById('controls').classList.add('active');
+            } else {
+                document.getElementById('controls').classList.remove('active');
+            }
+        }
+
+        function connect() {
+            const ip = document.getElementById('tvIp').value.trim();
+            if (!ip) {
+                showStatus('Please enter a TV IP address', 'error');
+                return;
+            }
+
+            showStatus('Connecting to TV...', 'info');
+
+            // Try secure WebSocket first (port 3001), fall back to unsecured (port 3000)
+            const wsUrl = `wss://${ip}:3001`;
+            console.log('Connecting to:', wsUrl);
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                showStatus('WebSocket connected, registering...', 'info');
+
+                // Send registration message
+                const registrationMsg = {
+                    "type": "register",
+                    "id": "register_0",
+                    "payload": clientKey ? {...REGISTRATION_PAYLOAD, "client-key": clientKey} : REGISTRATION_PAYLOAD
+                };
+
+                console.log('Sending registration:', registrationMsg);
+                ws.send(JSON.stringify(registrationMsg));
+            };
+
+            ws.onmessage = (event) => {
+                console.log('Received:', event.data);
+                const message = JSON.parse(event.data);
+
+                if (message.type === 'response' && message.id === 'register_0') {
+                    if (message.payload.pairingType === 'PROMPT') {
+                        showStatus('Please accept the connection on your TV!', 'warning');
+                    }
+                } else if (message.type === 'registered') {
+                    clientKey = message.payload['client-key'];
+                    console.log('Registered! Client key:', clientKey);
+                    showStatus('Connected successfully!', 'success');
+                    updateUI(true);
+
+                    // Get current backlight value
+                    getCurrentBacklight();
+                } else if (message.type === 'response') {
+                    // Handle response messages
+                    if (message.payload && message.payload.settings && message.payload.settings.backlight !== undefined) {
+                        const value = message.payload.settings.backlight;
+                        document.getElementById('backlight').value = value;
+                        document.getElementById('backlightValue').textContent = value;
+                        showStatus(`Current backlight: ${value}`, 'success');
+                    }
+                } else if (message.type === 'error') {
+                    showStatus(`Error: ${message.error}`, 'error');
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                showStatus('Connection error. Try using ws:// instead of wss:// or check TV IP', 'error');
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket closed');
+                if (connected) {
+                    showStatus('Disconnected from TV', 'info');
+                }
+                updateUI(false);
+                ws = null;
+            };
+        }
+
+        function disconnect() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+            updateUI(false);
+            showStatus('Disconnected', 'info');
+        }
+
+        function getCurrentBacklight() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                showStatus('Not connected to TV', 'error');
+                return;
+            }
+
+            messageId++;
+            const message = {
+                "id": `get_backlight_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["backlight"]
+                }
+            };
+
+            console.log('Getting current backlight:', message);
+            ws.send(JSON.stringify(message));
+        }
+
+        function setBacklight(value) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                showStatus('Not connected to TV', 'error');
+                return;
+            }
+
+            messageId++;
+            const message = {
+                "id": `set_backlight_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/setSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "settings": {
+                        "backlight": parseInt(value)
+                    }
+                }
+            };
+
+            console.log('Setting backlight to:', value);
+            ws.send(JSON.stringify(message));
+            showStatus(`Setting backlight to ${value}...`, 'info');
+        }
+
+        function updateBacklightDisplay(value) {
+            document.getElementById('backlightValue').textContent = value;
+        }
+    </script>
+</body>
+</html>
