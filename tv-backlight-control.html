@@ -426,6 +426,103 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="section">
+                    <h3>HDR Settings</h3>
+
+                    <div class="setting-row">
+                        <label for="hdrDynamicToneMapping">HDR Dynamic Tone Mapping:</label>
+                        <select id="hdrDynamicToneMapping" onchange="setSetting('hdrDynamicToneMapping', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                            <option value="HGIG">HGIG</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="hgig">HGIG (G5 2024+):</label>
+                        <select id="hgig" onchange="setSetting('hgig', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="dolbyPrecisionDetail">Dolby Precision Detail:</label>
+                        <select id="dolbyPrecisionDetail" onchange="setSetting('dolbyPrecisionDetail', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Gaming Settings</h3>
+
+                    <div class="setting-row">
+                        <label for="blackStabilizer">Black Stabilizer: <span class="setting-value" id="blackStabilizerValue">0</span></label>
+                        <input type="range" id="blackStabilizer" min="0" max="30" value="0" oninput="updateSliderDisplay('blackStabilizer', this.value)" onchange="setSetting('blackStabilizer', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteStabilizer">White Stabilizer: <span class="setting-value" id="whiteStabilizerValue">0</span></label>
+                        <input type="range" id="whiteStabilizer" min="0" max="30" value="0" oninput="updateSliderDisplay('whiteStabilizer', this.value)" onchange="setSetting('whiteStabilizer', parseInt(this.value))">
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>White Balance (2-Point)</h3>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceColorTemperature">Color Temperature:</label>
+                        <select id="whiteBalanceColorTemperature" onchange="setSetting('whiteBalanceColorTemperature', this.value)">
+                            <option value="warm50">Warm 50</option>
+                            <option value="warm30">Warm 30</option>
+                            <option value="warm20">Warm 20</option>
+                            <option value="warm10">Warm 10</option>
+                            <option value="medium">Medium</option>
+                            <option value="cool">Cool</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalancePoint">White Balance Point:</label>
+                        <select id="whiteBalancePoint" onchange="setSetting('whiteBalancePoint', this.value)">
+                            <option value="low">Low (2-Point)</option>
+                            <option value="high">High (2-Point)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceRedOffset">Red Offset: <span class="setting-value" id="whiteBalanceRedOffsetValue">0</span></label>
+                        <input type="range" id="whiteBalanceRedOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedOffset', this.value)" onchange="setSetting('whiteBalanceRedOffset', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceGreenOffset">Green Offset: <span class="setting-value" id="whiteBalanceGreenOffsetValue">0</span></label>
+                        <input type="range" id="whiteBalanceGreenOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenOffset', this.value)" onchange="setSetting('whiteBalanceGreenOffset', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceBlueOffset">Blue Offset: <span class="setting-value" id="whiteBalanceBlueOffsetValue">0</span></label>
+                        <input type="range" id="whiteBalanceBlueOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueOffset', this.value)" onchange="setSetting('whiteBalanceBlueOffset', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceRedGain">Red Gain: <span class="setting-value" id="whiteBalanceRedGainValue">0</span></label>
+                        <input type="range" id="whiteBalanceRedGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedGain', this.value)" onchange="setSetting('whiteBalanceRedGain', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceGreenGain">Green Gain: <span class="setting-value" id="whiteBalanceGreenGainValue">0</span></label>
+                        <input type="range" id="whiteBalanceGreenGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenGain', this.value)" onchange="setSetting('whiteBalanceGreenGain', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="whiteBalanceBlueGain">Blue Gain: <span class="setting-value" id="whiteBalanceBlueGainValue">0</span></label>
+                        <input type="range" id="whiteBalanceBlueGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueGain', this.value)" onchange="setSetting('whiteBalanceBlueGain', parseInt(this.value))">
+                    </div>
+                </div>
             </div>
 
             <!-- Motion Tab -->
@@ -832,7 +929,11 @@
                         "sharpness", "colorTemperature", "blackLevel", "gamma", "colorGamut",
                         "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution",
                         "noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema",
-                        "eyeComfortMode", "truMotionMode", "truMotionBlur", "truMotionJudder",
+                        "eyeComfortMode", "hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail",
+                        "blackStabilizer", "whiteStabilizer", "whiteBalanceColorTemperature",
+                        "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset",
+                        "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain",
+                        "whiteBalanceBlueGain", "truMotionMode", "truMotionBlur", "truMotionJudder",
                         "motionEyeCare", "motionProOLED", "energySaving"
                     ]
                 }
