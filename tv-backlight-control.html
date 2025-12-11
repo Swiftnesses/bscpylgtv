@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LG TV Backlight Control</title>
+    <title>LG TV Picture Control</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
+            max-width: 800px;
             margin: 50px auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -122,11 +122,88 @@
         .controls.active {
             display: block;
         }
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+            border-bottom: 2px solid #a50034;
+            padding-bottom: 5px;
+        }
+        .setting-row {
+            margin-bottom: 15px;
+        }
+        .setting-row label {
+            font-size: 14px;
+        }
+        .setting-value {
+            display: inline-block;
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: #a50034;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+        input[type="range"] {
+            width: calc(100% - 60px);
+            margin: 10px 0;
+            vertical-align: middle;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-right: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            background-color: #e0e0e0;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 3px solid #a50034;
+            color: #a50034;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        button.refresh {
+            background-color: #4CAF50;
+            margin-top: 10px;
+        }
+        button.refresh:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>LG TV Backlight Control</h1>
+        <h1>LG TV Picture Control</h1>
 
         <div class="input-group">
             <label for="tvIp">TV IP Address:</label>
@@ -150,13 +227,295 @@
         </div>
 
         <div id="controls" class="controls">
-            <div class="slider-group">
-                <label for="backlight">OLED Backlight:</label>
-                <div class="value-display" id="backlightValue">50</div>
-                <input type="range" id="backlight" min="0" max="100" value="50" oninput="updateBacklightDisplay(this.value)" onchange="setBacklight(this.value)">
-                <div style="display: flex; justify-content: space-between; color: #999; font-size: 12px;">
-                    <span>0</span>
-                    <span>100</span>
+            <button class="refresh" onclick="refreshAllSettings()">Refresh All Settings</button>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('basic')">Basic</button>
+                <button class="tab" onclick="switchTab('advanced')">Advanced</button>
+                <button class="tab" onclick="switchTab('motion')">Motion</button>
+                <button class="tab" onclick="switchTab('ai')">AI/Other</button>
+            </div>
+
+            <!-- Basic Tab -->
+            <div id="tab-basic" class="tab-content active">
+                <div class="section">
+                    <h3>Picture Mode</h3>
+                    <div class="setting-row">
+                        <label for="pictureMode">Mode:</label>
+                        <select id="pictureMode" onchange="setPictureMode(this.value)">
+                            <option value="">-- Select Mode --</option>
+                            <optgroup label="SDR Modes">
+                                <option value="cinema">Cinema</option>
+                                <option value="expert1">Expert 1 (Bright Room)</option>
+                                <option value="expert2">Expert 2 (Dark Room)</option>
+                                <option value="filmMaker">Filmmaker Mode</option>
+                                <option value="game">Game</option>
+                                <option value="vivid">Vivid</option>
+                                <option value="normal">Normal</option>
+                                <option value="eco">Eco</option>
+                                <option value="sports">Sports</option>
+                            </optgroup>
+                            <optgroup label="HDR10 Modes">
+                                <option value="hdrCinema">HDR Cinema</option>
+                                <option value="hdrCinemaBright">HDR Cinema Bright</option>
+                                <option value="hdrGame">HDR Game</option>
+                                <option value="hdrFilmMaker">HDR Filmmaker</option>
+                                <option value="hdrVivid">HDR Vivid</option>
+                                <option value="hdrStandard">HDR Standard</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Basic Picture Settings</h3>
+
+                    <div class="setting-row">
+                        <label for="backlight">Backlight/OLED Light: <span class="setting-value" id="backlightValue">50</span></label>
+                        <input type="range" id="backlight" min="0" max="100" value="50" oninput="updateSliderDisplay('backlight', this.value)" onchange="setSetting('backlight', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="contrast">Contrast: <span class="setting-value" id="contrastValue">85</span></label>
+                        <input type="range" id="contrast" min="0" max="100" value="85" oninput="updateSliderDisplay('contrast', this.value)" onchange="setSetting('contrast', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="brightness">Brightness: <span class="setting-value" id="brightnessValue">50</span></label>
+                        <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateSliderDisplay('brightness', this.value)" onchange="setSetting('brightness', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="color">Color: <span class="setting-value" id="colorValue">50</span></label>
+                        <input type="range" id="color" min="0" max="100" value="50" oninput="updateSliderDisplay('color', this.value)" onchange="setSetting('color', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="tint">Tint: <span class="setting-value" id="tintValue">0</span></label>
+                        <input type="range" id="tint" min="-50" max="50" value="0" oninput="updateSliderDisplay('tint', this.value)" onchange="setSetting('tint', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="sharpness">Sharpness: <span class="setting-value" id="sharpnessValue">10</span></label>
+                        <input type="range" id="sharpness" min="0" max="50" value="10" oninput="updateSliderDisplay('sharpness', this.value)" onchange="setSetting('sharpness', parseInt(this.value))">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="colorTemperature">Color Temperature: <span class="setting-value" id="colorTemperatureValue">0</span></label>
+                        <input type="range" id="colorTemperature" min="-50" max="50" value="0" oninput="updateSliderDisplay('colorTemperature', this.value)" onchange="setSetting('colorTemperature', parseInt(this.value))">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Tab -->
+            <div id="tab-advanced" class="tab-content">
+                <div class="section">
+                    <h3>Advanced Picture Settings</h3>
+
+                    <div class="setting-row">
+                        <label for="blackLevel">Black Level:</label>
+                        <select id="blackLevel" onchange="setSetting('blackLevel', this.value)">
+                            <option value="auto">Auto</option>
+                            <option value="low">Low</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="gamma">Gamma:</label>
+                        <select id="gamma" onchange="setSetting('gamma', this.value)">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high1">High 1</option>
+                            <option value="high2">High 2</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="colorGamut">Color Gamut:</label>
+                        <select id="colorGamut" onchange="setSetting('colorGamut', this.value)">
+                            <option value="auto">Auto</option>
+                            <option value="native">Native</option>
+                            <option value="wide">Wide</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="dynamicContrast">Dynamic Contrast:</label>
+                        <select id="dynamicContrast" onchange="setSetting('dynamicContrast', this.value)">
+                            <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="peakBrightness">Peak Brightness:</label>
+                        <select id="peakBrightness" onchange="setSetting('peakBrightness', this.value)">
+                            <option value="off">Off</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="dynamicColor">Dynamic Color:</label>
+                        <select id="dynamicColor" onchange="setSetting('dynamicColor', this.value)">
+                            <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="superResolution">Super Resolution:</label>
+                        <select id="superResolution" onchange="setSetting('superResolution', this.value)">
+                            <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="noiseReduction">Noise Reduction:</label>
+                        <select id="noiseReduction" onchange="setSetting('noiseReduction', this.value)">
+                            <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="mpegNoiseReduction">MPEG Noise Reduction:</label>
+                        <select id="mpegNoiseReduction" onchange="setSetting('mpegNoiseReduction', this.value)">
+                            <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="smoothGradation">Smooth Gradation:</label>
+                        <select id="smoothGradation" onchange="setSetting('smoothGradation', this.value)">
+                            <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="realCinema">Real Cinema:</label>
+                        <select id="realCinema" onchange="setSetting('realCinema', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="eyeComfortMode">Eye Comfort Mode:</label>
+                        <select id="eyeComfortMode" onchange="setSetting('eyeComfortMode', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motion Tab -->
+            <div id="tab-motion" class="tab-content">
+                <div class="section">
+                    <h3>Motion Settings</h3>
+
+                    <div class="setting-row">
+                        <label for="truMotionMode">TruMotion Mode:</label>
+                        <select id="truMotionMode" onchange="setSetting('truMotionMode', this.value, true)">
+                            <option value="off">Off</option>
+                            <option value="natural">Natural</option>
+                            <option value="smooth">Smooth</option>
+                            <option value="clear">Clear</option>
+                            <option value="cinemaClear">Cinema Clear</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row" id="truMotionBlurRow" style="display: none;">
+                        <label for="truMotionBlur">TruMotion Blur: <span class="setting-value" id="truMotionBlurValue">0</span></label>
+                        <input type="range" id="truMotionBlur" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionBlur', this.value)" onchange="setSetting('truMotionBlur', parseInt(this.value), true)">
+                    </div>
+
+                    <div class="setting-row" id="truMotionJudderRow" style="display: none;">
+                        <label for="truMotionJudder">TruMotion Judder: <span class="setting-value" id="truMotionJudderValue">0</span></label>
+                        <input type="range" id="truMotionJudder" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionJudder', this.value)" onchange="setSetting('truMotionJudder', parseInt(this.value), true)">
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="motionEyeCare">Motion Eye Care:</label>
+                        <select id="motionEyeCare" onchange="setSetting('motionEyeCare', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="motionProOLED">Motion Pro (OLED):</label>
+                        <select id="motionProOLED" onchange="setSetting('motionProOLED', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI/Other Tab -->
+            <div id="tab-ai" class="tab-content">
+                <div class="section">
+                    <h3>AI Picture Settings</h3>
+
+                    <div class="setting-row">
+                        <label for="ai_Picture">AI Picture:</label>
+                        <select id="ai_Picture" onchange="setAISetting('ai_Picture', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="ai_Brightness">AI Brightness:</label>
+                        <select id="ai_Brightness" onchange="setAISetting('ai_Brightness', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <label for="ai_Genre">AI Genre:</label>
+                        <select id="ai_Genre" onchange="setAISetting('ai_Genre', this.value)">
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Energy & Other</h3>
+
+                    <div class="setting-row">
+                        <label for="energySaving">Energy Saving:</label>
+                        <select id="energySaving" onchange="setSetting('energySaving', this.value)">
+                            <option value="off">Off</option>
+                            <option value="min">Minimum</option>
+                            <option value="med">Medium</option>
+                            <option value="max">Maximum</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -308,18 +667,23 @@
                     showStatus('Connected successfully!', 'success');
                     updateUI(true);
 
-                    // Get current backlight value
-                    getCurrentBacklight();
+                    // Refresh all settings
+                    refreshAllSettings();
                 } else if (message.type === 'response') {
                     // Handle response messages
-                    if (message.payload && message.payload.settings && message.payload.settings.backlight !== undefined) {
-                        const value = message.payload.settings.backlight;
-                        document.getElementById('backlight').value = value;
-                        document.getElementById('backlightValue').textContent = value;
-                        showStatus(`Current backlight: ${value}`, 'success');
+                    if (message.payload && message.payload.settings) {
+                        updateSettingsUI(message.payload.settings);
+
+                        // Show success message for get operations
+                        if (message.id.includes('get_all_settings') || message.id.includes('get_ai_settings')) {
+                            showStatus('Settings refreshed!', 'success');
+                        } else if (message.id.startsWith('set_')) {
+                            showStatus('Setting applied successfully', 'success');
+                        }
                     }
                 } else if (message.type === 'error') {
                     showStatus(`Error: ${message.error}`, 'error');
+                    console.error('TV error:', message);
                 }
             };
 
@@ -354,7 +718,103 @@
             showStatus('Disconnected', 'info');
         }
 
-        function getCurrentBacklight() {
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Generic setting function
+        function setSetting(settingName, value, currentApp = false) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                showStatus('Not connected to TV', 'error');
+                return;
+            }
+
+            messageId++;
+            const payload = {
+                "category": "picture",
+                "settings": {}
+            };
+            payload.settings[settingName] = value;
+
+            if (currentApp) {
+                payload.current_app = true;
+            }
+
+            const message = {
+                "id": `set_${settingName}_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/setSystemSettings",
+                "payload": payload
+            };
+
+            console.log(`Setting ${settingName} to:`, value);
+            ws.send(JSON.stringify(message));
+            showStatus(`Setting ${settingName}...`, 'info');
+
+            // Handle TruMotion mode changes
+            if (settingName === 'truMotionMode') {
+                const blurRow = document.getElementById('truMotionBlurRow');
+                const judderRow = document.getElementById('truMotionJudderRow');
+                if (value === 'user') {
+                    blurRow.style.display = 'block';
+                    judderRow.style.display = 'block';
+                } else {
+                    blurRow.style.display = 'none';
+                    judderRow.style.display = 'none';
+                }
+            }
+        }
+
+        // AI settings (separate category)
+        function setAISetting(settingName, value) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                showStatus('Not connected to TV', 'error');
+                return;
+            }
+
+            messageId++;
+            const payload = {
+                "category": "aiPicture",
+                "settings": {}
+            };
+            payload.settings[settingName] = value;
+
+            const message = {
+                "id": `set_${settingName}_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/setSystemSettings",
+                "payload": payload
+            };
+
+            console.log(`Setting ${settingName} to:`, value);
+            ws.send(JSON.stringify(message));
+            showStatus(`Setting ${settingName}...`, 'info');
+        }
+
+        // Picture mode setting
+        function setPictureMode(mode) {
+            if (!mode) return;
+            setSetting('pictureMode', mode);
+        }
+
+        // Update slider display
+        function updateSliderDisplay(settingName, value) {
+            document.getElementById(`${settingName}Value`).textContent = value;
+        }
+
+        // Refresh all settings
+        function refreshAllSettings() {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
                 return;
@@ -362,45 +822,66 @@
 
             messageId++;
             const message = {
-                "id": `get_backlight_${messageId}`,
+                "id": `get_all_settings_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["backlight"]
+                    "keys": [
+                        "pictureMode", "backlight", "contrast", "brightness", "color", "tint",
+                        "sharpness", "colorTemperature", "blackLevel", "gamma", "colorGamut",
+                        "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution",
+                        "noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema",
+                        "eyeComfortMode", "truMotionMode", "truMotionBlur", "truMotionJudder",
+                        "motionEyeCare", "motionProOLED", "energySaving"
+                    ]
                 }
             };
 
-            console.log('Getting current backlight:', message);
+            console.log('Refreshing all settings');
             ws.send(JSON.stringify(message));
+            showStatus('Refreshing settings...', 'info');
+
+            // Also get AI settings
+            messageId++;
+            const aiMessage = {
+                "id": `get_ai_settings_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "aiPicture",
+                    "keys": ["ai_Picture", "ai_Brightness", "ai_Genre"]
+                }
+            };
+            ws.send(JSON.stringify(aiMessage));
         }
 
-        function setBacklight(value) {
-            if (!ws || ws.readyState !== WebSocket.OPEN) {
-                showStatus('Not connected to TV', 'error');
-                return;
-            }
-
-            messageId++;
-            const message = {
-                "id": `set_backlight_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/setSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "settings": {
-                        "backlight": parseInt(value)
+        // Update UI with received settings
+        function updateSettingsUI(settings) {
+            for (const [key, value] of Object.entries(settings)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'range') {
+                        element.value = value;
+                        updateSliderDisplay(key, value);
+                    } else if (element.tagName === 'SELECT') {
+                        element.value = value;
                     }
                 }
-            };
+            }
 
-            console.log('Setting backlight to:', value);
-            ws.send(JSON.stringify(message));
-            showStatus(`Setting backlight to ${value}...`, 'info');
-        }
-
-        function updateBacklightDisplay(value) {
-            document.getElementById('backlightValue').textContent = value;
+            // Handle TruMotion visibility
+            if (settings.truMotionMode) {
+                const blurRow = document.getElementById('truMotionBlurRow');
+                const judderRow = document.getElementById('truMotionJudderRow');
+                if (settings.truMotionMode === 'user') {
+                    blurRow.style.display = 'block';
+                    judderRow.style.display = 'block';
+                } else {
+                    blurRow.style.display = 'none';
+                    judderRow.style.display = 'none';
+                }
+            }
         }
     </script>
 </body>
