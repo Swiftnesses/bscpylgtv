@@ -157,6 +157,22 @@
             font-size: 14px;
             background-color: white;
         }
+        select:disabled, input[type="range"]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f5f5f5;
+        }
+        .setting-row.unavailable label {
+            color: #999;
+        }
+        .setting-row.unavailable label::after {
+            content: " (not available)";
+            font-size: 11px;
+            color: #999;
+            font-style: italic;
+            font-weight: normal;
+            text-decoration: none;
+        }
         input[type="range"] {
             width: calc(100% - 60px);
             margin: 10px 0;
@@ -254,6 +270,8 @@
                                 <option value="normal">Normal</option>
                                 <option value="eco">Eco</option>
                                 <option value="sports">Sports</option>
+                                <option value="photo">Photo</option>
+                                <option value="personalized">Personalized</option>
                             </optgroup>
                             <optgroup label="HDR10 Modes">
                                 <option value="hdrCinema">HDR Cinema</option>
@@ -262,6 +280,27 @@
                                 <option value="hdrFilmMaker">HDR Filmmaker</option>
                                 <option value="hdrVivid">HDR Vivid</option>
                                 <option value="hdrStandard">HDR Standard</option>
+                                <option value="hdrEco">HDR Eco</option>
+                                <option value="hdrEffect">HDR Effect</option>
+                                <option value="hdrPersonalized">HDR Personalized</option>
+                            </optgroup>
+                            <optgroup label="Dolby Vision Modes">
+                                <option value="dolbyHdrCinema">Dolby Cinema</option>
+                                <option value="dolbyHdrCinemaBright">Dolby Cinema Bright</option>
+                                <option value="dolbyHdrGame">Dolby Game</option>
+                                <option value="dolbyHdrVivid">Dolby Vivid</option>
+                                <option value="dolbyHdrStandard">Dolby Standard</option>
+                                <option value="dolbyHdrPersonalized">Dolby Personalized</option>
+                            </optgroup>
+                            <optgroup label="Technicolor Modes">
+                                <option value="technicolor">Technicolor</option>
+                                <option value="hdrTechnicolor">HDR Technicolor</option>
+                                <option value="technicolorHdrVivid">Technicolor HDR Vivid</option>
+                                <option value="technicolorHdrStandard">Technicolor HDR Standard</option>
+                                <option value="technicolorHdrCinemaBright">Technicolor HDR Cinema Bright</option>
+                                <option value="technicolorHdrCinema">Technicolor HDR Cinema</option>
+                                <option value="technicolorHdrGame">Technicolor HDR Game</option>
+                                <option value="technicolorHdrTechnicolor">Technicolor HDR Technicolor</option>
                             </optgroup>
                         </select>
                     </div>
@@ -338,6 +377,8 @@
                             <option value="native">Native</option>
                             <option value="wide">Wide</option>
                             <option value="extended">Extended</option>
+                            <option value="dynamic">Dynamic</option>
+                            <option value="srgb">sRGB</option>
                         </select>
                     </div>
 
@@ -479,12 +520,11 @@
                     <div class="setting-row">
                         <label for="whiteBalanceColorTemperature">Color Temperature:</label>
                         <select id="whiteBalanceColorTemperature" onchange="setSetting('whiteBalanceColorTemperature', this.value)">
-                            <option value="warm50">Warm 50</option>
-                            <option value="warm30">Warm 30</option>
-                            <option value="warm20">Warm 20</option>
-                            <option value="warm10">Warm 10</option>
-                            <option value="medium">Medium</option>
                             <option value="cool">Cool</option>
+                            <option value="medium">Medium</option>
+                            <option value="warm1">Warm 1</option>
+                            <option value="warm2">Warm 2</option>
+                            <option value="warm3">Warm 3</option>
                         </select>
                     </div>
 
@@ -566,8 +606,11 @@
                     <div class="setting-row">
                         <label for="motionProOLED">Motion Pro (OLED):</label>
                         <select id="motionProOLED" onchange="setSetting('motionProOLED', this.value)">
-                            <option value="on">On</option>
                             <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="auto">Auto</option>
                         </select>
                     </div>
                 </div>
@@ -614,6 +657,7 @@
                             <option value="med">Medium</option>
                             <option value="max">Maximum</option>
                             <option value="auto">Auto</option>
+                            <option value="screen_off">Screen Off</option>
                         </select>
                     </div>
                 </div>
@@ -798,6 +842,14 @@
                         // Silently ignore errors when fetching settings (setting may not exist on this model)
                         console.log(`Some settings not available in ${message.id}:`, message.payload?.errorText || message.error);
 
+                        // Parse which request failed and mark those settings as unavailable
+                        const errorText = message.payload?.errorText || message.error || '';
+                        if (errorText.includes('not allowed') || errorText.includes('not available')) {
+                            // Extract keys from the original request and grey them out
+                            // Note: We'd need to track the keys per request, but for now we'll handle it on SET
+                            console.log(`Settings in ${message.id} not available on this TV`);
+                        }
+
                         // Track refresh completion even on error
                         if (pendingRefreshRequests > 0) {
                             pendingRefreshRequests--;
@@ -809,8 +861,12 @@
                         // Check if it's a "not allowed" error (setting doesn't exist)
                         const errorText = message.payload?.errorText || message.error || '';
                         if (errorText.includes('not allowed') || errorText.includes('not available')) {
-                            // Silently ignore - setting not available on this TV model
-                            console.log(`Setting not available on this TV:`, errorText);
+                            // Extract setting name from message ID (format: set_settingName_messageId)
+                            const settingName = message.id.replace(/^set_/, '').replace(/_\d+$/, '');
+                            console.log(`Setting not available on this TV: ${settingName}`);
+
+                            // Mark as unavailable in UI
+                            markSettingUnavailable(settingName);
                         } else {
                             // Show other errors (invalid values, etc.)
                             showStatus(`Error: ${errorText}`, 'error');
@@ -908,6 +964,21 @@
                 } else {
                     blurRow.style.display = 'none';
                     judderRow.style.display = 'none';
+                }
+            }
+        }
+
+        // Mark a setting as unavailable in the UI
+        function markSettingUnavailable(settingName) {
+            const element = document.getElementById(settingName);
+            if (element) {
+                // Disable the control
+                element.disabled = true;
+
+                // Mark the row as unavailable
+                const row = element.closest('.setting-row');
+                if (row) {
+                    row.classList.add('unavailable');
                 }
             }
         }
@@ -1049,6 +1120,13 @@
             for (const [key, value] of Object.entries(settings)) {
                 const element = document.getElementById(key);
                 if (element) {
+                    // Successfully retrieved - ensure it's enabled
+                    element.disabled = false;
+                    const row = element.closest('.setting-row');
+                    if (row) {
+                        row.classList.remove('unavailable');
+                    }
+
                     if (element.type === 'range') {
                         element.value = value;
                         updateSliderDisplay(key, value);
@@ -1070,6 +1148,13 @@
                     judderRow.style.display = 'none';
                 }
             }
+        }
+
+        // Grey out settings that failed to retrieve
+        function markSettingsUnavailableFromKeys(keys) {
+            keys.forEach(key => {
+                markSettingUnavailable(key);
+            });
         }
     </script>
 </body>
