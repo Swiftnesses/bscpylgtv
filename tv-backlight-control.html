@@ -624,6 +624,7 @@
         let clientKey = null;
         let connected = false;
         let useSecure = true;  // New TVs require wss:// on port 3001
+        let pendingRefreshRequests = 0;
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -771,16 +772,44 @@
                     if (message.payload && message.payload.settings) {
                         updateSettingsUI(message.payload.settings);
 
-                        // Show success message for get operations
-                        if (message.id.includes('get_all_settings') || message.id.includes('get_ai_settings')) {
-                            showStatus('Settings refreshed!', 'success');
-                        } else if (message.id.startsWith('set_')) {
+                        // Show success message for set operations only
+                        if (message.id.startsWith('set_')) {
                             showStatus('Setting applied successfully', 'success');
+                        } else if (message.id.startsWith('get_')) {
+                            // Quietly update UI for get operations
+                            const settingsCount = Object.keys(message.payload.settings).length;
+                            console.log(`Loaded ${settingsCount} settings from ${message.id}`);
+
+                            // Track refresh completion
+                            if (pendingRefreshRequests > 0) {
+                                pendingRefreshRequests--;
+                                if (pendingRefreshRequests === 0) {
+                                    showStatus('Settings loaded!', 'success');
+                                }
+                            }
                         }
                     }
                 } else if (message.type === 'error') {
-                    showStatus(`Error: ${message.error}`, 'error');
-                    console.error('TV error:', message);
+                    // Handle errors gracefully - some settings may not be available on all TV models
+                    if (message.id.startsWith('get_')) {
+                        // Silently ignore errors when fetching settings (setting may not exist on this model)
+                        console.log(`Some settings not available in ${message.id}:`, message.payload?.errorText || message.error);
+
+                        // Track refresh completion even on error
+                        if (pendingRefreshRequests > 0) {
+                            pendingRefreshRequests--;
+                            if (pendingRefreshRequests === 0) {
+                                showStatus('Settings loaded (some not available on this TV)', 'success');
+                            }
+                        }
+                    } else if (message.id.startsWith('set_')) {
+                        // Show errors when setting values
+                        showStatus(`Error: ${message.payload?.errorText || message.error}`, 'error');
+                    } else {
+                        // Other errors
+                        showStatus(`Error: ${message.error}`, 'error');
+                        console.error('TV error:', message);
+                    }
                 }
             };
 
@@ -910,51 +939,99 @@
             document.getElementById(`${settingName}Value`).textContent = value;
         }
 
-        // Refresh all settings
+        // Refresh all settings (split into chunks to avoid overwhelming TV)
         function refreshAllSettings() {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
                 return;
             }
 
+            showStatus('Refreshing settings...', 'info');
+            pendingRefreshRequests = 7;  // Number of refresh requests we're about to send
+
+            // Basic settings
             messageId++;
-            const message = {
-                "id": `get_all_settings_${messageId}`,
+            ws.send(JSON.stringify({
+                "id": `get_basic_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": [
-                        "pictureMode", "backlight", "contrast", "brightness", "color", "tint",
-                        "sharpness", "colorTemperature", "blackLevel", "gamma", "colorGamut",
-                        "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution",
-                        "noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema",
-                        "eyeComfortMode", "hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail",
-                        "blackStabilizer", "whiteStabilizer", "whiteBalanceColorTemperature",
-                        "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset",
-                        "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain",
-                        "whiteBalanceBlueGain", "truMotionMode", "truMotionBlur", "truMotionJudder",
-                        "motionEyeCare", "motionProOLED", "energySaving"
-                    ]
+                    "keys": ["pictureMode", "backlight", "contrast", "brightness", "color", "tint", "sharpness", "colorTemperature"]
                 }
-            };
+            }));
 
-            console.log('Refreshing all settings');
-            ws.send(JSON.stringify(message));
-            showStatus('Refreshing settings...', 'info');
-
-            // Also get AI settings
+            // Advanced picture settings
             messageId++;
-            const aiMessage = {
-                "id": `get_ai_settings_${messageId}`,
+            ws.send(JSON.stringify({
+                "id": `get_advanced_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["blackLevel", "gamma", "colorGamut", "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution"]
+                }
+            }));
+
+            // Noise reduction & other
+            messageId++;
+            ws.send(JSON.stringify({
+                "id": `get_nr_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema", "eyeComfortMode", "energySaving"]
+                }
+            }));
+
+            // HDR & gaming settings
+            messageId++;
+            ws.send(JSON.stringify({
+                "id": `get_hdr_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail", "blackStabilizer", "whiteStabilizer"]
+                }
+            }));
+
+            // White balance settings
+            messageId++;
+            ws.send(JSON.stringify({
+                "id": `get_wb_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["whiteBalanceColorTemperature", "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset", "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain", "whiteBalanceBlueGain"]
+                }
+            }));
+
+            // Motion settings
+            messageId++;
+            ws.send(JSON.stringify({
+                "id": `get_motion_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"]
+                }
+            }));
+
+            // AI settings
+            messageId++;
+            ws.send(JSON.stringify({
+                "id": `get_ai_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "aiPicture",
                     "keys": ["ai_Picture", "ai_Brightness", "ai_Genre"]
                 }
-            };
-            ws.send(JSON.stringify(aiMessage));
+            }));
         }
 
         // Update UI with received settings
