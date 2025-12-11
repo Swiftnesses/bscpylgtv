@@ -337,6 +337,7 @@
                             <option value="auto">Auto</option>
                             <option value="native">Native</option>
                             <option value="wide">Wide</option>
+                            <option value="extended">Extended</option>
                         </select>
                     </div>
 
@@ -354,6 +355,8 @@
                         <label for="peakBrightness">Peak Brightness:</label>
                         <select id="peakBrightness" onchange="setSetting('peakBrightness', this.value)">
                             <option value="off">Off</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
                             <option value="high">High</option>
                         </select>
                     </div>
@@ -803,8 +806,15 @@
                             }
                         }
                     } else if (message.id.startsWith('set_')) {
-                        // Show errors when setting values
-                        showStatus(`Error: ${message.payload?.errorText || message.error}`, 'error');
+                        // Check if it's a "not allowed" error (setting doesn't exist)
+                        const errorText = message.payload?.errorText || message.error || '';
+                        if (errorText.includes('not allowed') || errorText.includes('not available')) {
+                            // Silently ignore - setting not available on this TV model
+                            console.log(`Setting not available on this TV:`, errorText);
+                        } else {
+                            // Show other errors (invalid values, etc.)
+                            showStatus(`Error: ${errorText}`, 'error');
+                        }
                     } else {
                         // Other errors
                         showStatus(`Error: ${message.error}`, 'error');
