@@ -138,6 +138,7 @@
         let messageId = 0;
         let clientKey = null;
         let connected = false;
+        let useSecure = true;
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -214,17 +215,24 @@
             }
         }
 
-        function connect() {
+        function connect(retryWithUnsecure = false) {
             const ip = document.getElementById('tvIp').value.trim();
             if (!ip) {
                 showStatus('Please enter a TV IP address', 'error');
                 return;
             }
 
-            showStatus('Connecting to TV...', 'info');
+            const protocol = (useSecure && !retryWithUnsecure) ? 'wss' : 'ws';
+            const port = (useSecure && !retryWithUnsecure) ? 3001 : 3000;
+            const wsUrl = `${protocol}://${ip}:${port}`;
 
-            // Try secure WebSocket first (port 3001), fall back to unsecured (port 3000)
-            const wsUrl = `wss://${ip}:3001`;
+            if (retryWithUnsecure) {
+                showStatus('Retrying with unsecured connection...', 'info');
+                useSecure = false;
+            } else {
+                showStatus('Connecting to TV...', 'info');
+            }
+
             console.log('Connecting to:', wsUrl);
 
             ws = new WebSocket(wsUrl);
@@ -275,11 +283,27 @@
 
             ws.onerror = (error) => {
                 console.error('WebSocket error:', error);
-                showStatus('Connection error. Try using ws:// instead of wss:// or check TV IP', 'error');
+
+                // If secure connection failed and we haven't tried unsecure yet, retry
+                if (useSecure && !retryWithUnsecure) {
+                    console.log('Secure connection failed, trying unsecured...');
+                    ws = null;
+                } else {
+                    showStatus('Connection error. Check TV IP address', 'error');
+                }
             };
 
-            ws.onclose = () => {
-                console.log('WebSocket closed');
+            ws.onclose = (event) => {
+                console.log('WebSocket closed', event);
+
+                // If secure connection failed and we haven't tried unsecure yet, retry
+                if (useSecure && !retryWithUnsecure && !connected) {
+                    console.log('Retrying with unsecured connection...');
+                    ws = null;
+                    setTimeout(() => connect(true), 500);
+                    return;
+                }
+
                 if (connected) {
                     showStatus('Disconnected from TV', 'info');
                 }
@@ -294,6 +318,7 @@
                 ws = null;
             }
             updateUI(false);
+            useSecure = true;  // Reset for next connection
             showStatus('Disconnected', 'info');
         }
 
