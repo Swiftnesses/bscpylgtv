@@ -138,7 +138,7 @@
         let messageId = 0;
         let clientKey = null;
         let connected = false;
-        let useSecure = true;
+        let useSecure = false;  // Default to unsecured ws:// to avoid certificate issues
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -318,7 +318,6 @@
                 ws = null;
             }
             updateUI(false);
-            useSecure = true;  // Reset for next connection
             showStatus('Disconnected', 'info');
         }
 
