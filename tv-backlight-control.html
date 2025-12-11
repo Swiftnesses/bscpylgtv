@@ -56,6 +56,28 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+        button.secondary {
+            background-color: #666;
+        }
+        button.secondary:hover {
+            background-color: #555;
+        }
+        .cert-help {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-left: 4px solid #f57c00;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .cert-help.show {
+            display: block;
+        }
+        .cert-help strong {
+            display: block;
+            margin-bottom: 8px;
+        }
         .slider-group {
             margin-top: 30px;
             padding-top: 20px;
@@ -116,6 +138,13 @@
             <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
         </div>
 
+        <div id="certHelp" class="cert-help">
+            <strong>First time connecting?</strong>
+            You need to accept the TV's SSL certificate first. Click the button below, then click "Advanced" and "Proceed" in the browser warning.
+            <br><br>
+            <button class="secondary" onclick="openCertPage()">Accept Certificate</button>
+        </div>
+
         <div id="status" class="status info" style="display: none;">
             Ready to connect
         </div>
@@ -138,7 +167,7 @@
         let messageId = 0;
         let clientKey = null;
         let connected = false;
-        let useSecure = false;  // Default to unsecured ws:// to avoid certificate issues
+        let useSecure = true;  // New TVs require wss:// on port 3001
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -202,6 +231,25 @@
             console.log(`[${type.toUpperCase()}] ${message}`);
         }
 
+        function showCertHelp(show) {
+            const certHelp = document.getElementById('certHelp');
+            if (show) {
+                certHelp.classList.add('show');
+            } else {
+                certHelp.classList.remove('show');
+            }
+        }
+
+        function openCertPage() {
+            const ip = document.getElementById('tvIp').value.trim();
+            if (!ip) {
+                showStatus('Please enter a TV IP address first', 'error');
+                return;
+            }
+            window.open(`https://${ip}:3001/`, '_blank');
+            showStatus('After accepting the certificate, close that tab and click Connect', 'info');
+        }
+
         function updateUI(isConnected) {
             connected = isConnected;
             document.getElementById('connectBtn').disabled = isConnected;
@@ -210,29 +258,23 @@
 
             if (isConnected) {
                 document.getElementById('controls').classList.add('active');
+                showCertHelp(false);  // Hide cert help when connected
             } else {
                 document.getElementById('controls').classList.remove('active');
             }
         }
 
-        function connect(retryWithUnsecure = false) {
+        function connect() {
             const ip = document.getElementById('tvIp').value.trim();
             if (!ip) {
                 showStatus('Please enter a TV IP address', 'error');
                 return;
             }
 
-            const protocol = (useSecure && !retryWithUnsecure) ? 'wss' : 'ws';
-            const port = (useSecure && !retryWithUnsecure) ? 3001 : 3000;
-            const wsUrl = `${protocol}://${ip}:${port}`;
+            showCertHelp(false);  // Hide cert help when attempting connection
+            showStatus('Connecting to TV...', 'info');
 
-            if (retryWithUnsecure) {
-                showStatus('Retrying with unsecured connection...', 'info');
-                useSecure = false;
-            } else {
-                showStatus('Connecting to TV...', 'info');
-            }
-
+            const wsUrl = `wss://${ip}:3001`;
             console.log('Connecting to:', wsUrl);
 
             ws = new WebSocket(wsUrl);
@@ -283,30 +325,21 @@
 
             ws.onerror = (error) => {
                 console.error('WebSocket error:', error);
-
-                // If secure connection failed and we haven't tried unsecure yet, retry
-                if (useSecure && !retryWithUnsecure) {
-                    console.log('Secure connection failed, trying unsecured...');
-                    ws = null;
-                } else {
-                    showStatus('Connection error. Check TV IP address', 'error');
-                }
+                showStatus('Connection failed. You may need to accept the SSL certificate first.', 'error');
+                showCertHelp(true);
             };
 
             ws.onclose = (event) => {
                 console.log('WebSocket closed', event);
 
-                // If secure connection failed and we haven't tried unsecure yet, retry
-                if (useSecure && !retryWithUnsecure && !connected) {
-                    console.log('Retrying with unsecured connection...');
-                    ws = null;
-                    setTimeout(() => connect(true), 500);
-                    return;
-                }
-
-                if (connected) {
+                if (!connected && event.code !== 1000) {
+                    // Connection failed before establishing
+                    showStatus('Connection failed. You may need to accept the SSL certificate first.', 'error');
+                    showCertHelp(true);
+                } else if (connected) {
                     showStatus('Disconnected from TV', 'info');
                 }
+
                 updateUI(false);
                 ws = null;
             };
