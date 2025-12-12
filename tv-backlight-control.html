@@ -1023,7 +1023,7 @@
             }
         }
 
-        // AI settings (separate category)
+        // AI settings (separate category and endpoint)
         function setAISetting(settingName, value) {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
@@ -1040,11 +1040,11 @@
             const message = {
                 "id": `set_${settingName}_${messageId}`,
                 "type": "request",
-                "uri": "ssap://settings/setSystemSettings",
+                "uri": "ssap://com.webos.settingsservice/setSystemSettings",  // AI settings use LUNA endpoint
                 "payload": payload
             };
 
-            console.log(`Setting ${settingName} to:`, value);
+            console.log(`Setting AI ${settingName} to:`, value);
             ws.send(JSON.stringify(message));
             showStatus(`Setting ${settingName}...`, 'info');
         }
