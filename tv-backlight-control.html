@@ -229,6 +229,7 @@
         <div>
             <button id="connectBtn" onclick="connect()">Connect</button>
             <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+            <button class="secondary" onclick="clearClientKey()">Clear Saved Key</button>
         </div>
 
         <div id="certHelp" class="cert-help">
@@ -660,7 +661,7 @@
     <script>
         let ws = null;
         let messageId = 0;
-        let clientKey = null;
+        let clientKey = localStorage.getItem('lgTvClientKey') || null;
         let connected = false;
         let useSecure = true;  // New TVs require wss:// on port 3001
         let pendingRefreshRequests = 0;
@@ -800,6 +801,8 @@
                     }
                 } else if (message.type === 'registered') {
                     clientKey = message.payload['client-key'];
+                    // Save client key for future connections
+                    localStorage.setItem('lgTvClientKey', clientKey);
                     console.log('Registered! Client key:', clientKey);
                     showStatus('Connected successfully!', 'success');
                     updateUI(true);
@@ -881,9 +884,17 @@
                 console.log('WebSocket closed', event);
 
                 if (!connected && event.code !== 1000) {
-                    // Connection failed before establishing
-                    showStatus('Connection failed. You may need to accept the SSL certificate first.', 'error');
-                    showCertHelp(true);
+                    // Check for invalid origin error (code 1008)
+                    if (event.code === 1008 && event.reason === 'invalid origin') {
+                        // Clear saved client key and try to help user
+                        clientKey = null;
+                        localStorage.removeItem('lgTvClientKey');
+                        showStatus('Connection rejected by TV (invalid origin). Try opening this file from a local web server, or clear your TV\'s registered apps list.', 'error');
+                    } else {
+                        // Connection failed before establishing
+                        showStatus('Connection failed. You may need to accept the SSL certificate first.', 'error');
+                        showCertHelp(true);
+                    }
                 } else if (connected) {
                     showStatus('Disconnected from TV', 'info');
                 }
@@ -900,6 +911,12 @@
             }
             updateUI(false);
             showStatus('Disconnected', 'info');
+        }
+
+        function clearClientKey() {
+            clientKey = null;
+            localStorage.removeItem('lgTvClientKey');
+            showStatus('Saved client key cleared. Try connecting again.', 'info');
         }
 
         // Tab switching
