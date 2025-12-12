@@ -835,6 +835,26 @@
                     // Refresh all settings
                     refreshAllSettings();
                 } else if (message.type === 'response') {
+                    // Handle alert responses (Luna API hack)
+                    if (message.id.startsWith('alert_') && message.payload && message.payload.alertId) {
+                        const alertId = message.payload.alertId;
+                        console.log(`Alert created with ID: ${alertId}, closing it...`);
+
+                        // Close the alert immediately
+                        messageId++;
+                        ws.send(JSON.stringify({
+                            "id": `close_alert_${messageId}`,
+                            "type": "request",
+                            "uri": "ssap://system.notifications/closeAlert",
+                            "payload": {
+                                "alertId": alertId
+                            }
+                        }));
+
+                        showStatus('AI setting applied successfully', 'success');
+                        return;
+                    }
+
                     // Handle response messages
                     if (message.payload && message.payload.settings) {
                         updateSettingsUI(message.payload.settings);
@@ -1186,7 +1206,7 @@
             }
         }
 
-        // AI settings (separate category and endpoint)
+        // AI settings (use alert hack to access Luna API like Python library)
         function setAISetting(settingName, value) {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
@@ -1194,21 +1214,50 @@
             }
 
             messageId++;
-            const payload = {
+
+            // Prepare Luna API parameters
+            const lunaParams = {
                 "category": "aiPicture",
                 "settings": {}
             };
-            payload.settings[settingName] = value;
+            lunaParams.settings[settingName] = value;
 
-            const message = {
-                "id": `set_${settingName}_${messageId}`,
-                "type": "request",
-                "uri": "ssap://com.webos.settingsservice/setSystemSettings",  // AI settings use LUNA endpoint
-                "payload": payload
+            // Luna URI for the alert hack
+            const lunaUri = "luna://com.webos.settingsservice/setSystemSettings";
+
+            // Create alert with Luna API call in onClick/onclose/onfail
+            // This is the same hack used by the Python library
+            const alertPayload = {
+                "message": " ",
+                "buttons": [
+                    {
+                        "label": "",
+                        "onClick": lunaUri,
+                        "params": lunaParams
+                    }
+                ],
+                "onclose": {
+                    "uri": lunaUri,
+                    "params": lunaParams
+                },
+                "onfail": {
+                    "uri": lunaUri,
+                    "params": lunaParams
+                }
             };
 
-            console.log(`Setting AI ${settingName} to:`, value);
-            ws.send(JSON.stringify(message));
+            const createAlertMsg = {
+                "id": `alert_${settingName}_${messageId}`,
+                "type": "request",
+                "uri": "ssap://system.notifications/createAlert",
+                "payload": alertPayload
+            };
+
+            console.log(`Setting AI ${settingName} to ${value} via Luna alert hack:`, createAlertMsg);
+            ws.send(JSON.stringify(createAlertMsg));
+
+            // Close the alert immediately after creating it
+            // We'll get the alertId from the response and close it
             showStatus(`Setting ${settingName}...`, 'info');
         }
 
