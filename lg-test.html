@@ -1297,6 +1297,22 @@
             console.log(`📤 Requesting motion settings (category: picture):`, motionRequest);
             ws.send(JSON.stringify(motionRequest));
 
+            // Try alternative TruMotion key names
+            messageId++;
+            const altMotionKeys = ["motion", "Motion", "tru_motion"];
+            requestedSettings[`get_motion_alt_${messageId}`] = altMotionKeys;
+            const altMotionRequest = {
+                "id": `get_motion_alt_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": altMotionKeys
+                }
+            };
+            console.log(`📤 Trying alternative TruMotion key names (category: picture):`, altMotionRequest);
+            ws.send(JSON.stringify(altMotionRequest));
+
             // AI settings
             messageId++;
             const aiKeys = ["ai_Picture", "ai_Brightness", "ai_Genre"];
