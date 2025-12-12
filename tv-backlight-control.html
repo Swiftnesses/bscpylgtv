@@ -614,29 +614,33 @@
             <div id="tab-ai" class="tab-content">
                 <div class="section">
                     <h3>AI Picture Settings</h3>
+                    <p style="background-color: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                        <strong>Note:</strong> AI settings can only be SET, not read. Current values cannot be displayed.
+                        Click a button below to set the value.
+                    </p>
 
                     <div class="setting-row">
-                        <label for="ai_Picture">AI Picture:</label>
-                        <select id="ai_Picture" onchange="setAISetting('ai_Picture', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
+                        <label>AI Picture:</label>
+                        <div>
+                            <button onclick="setAISetting('ai_Picture', 'on')" style="margin-right: 10px; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Set ON</button>
+                            <button onclick="setAISetting('ai_Picture', 'off')" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Set OFF</button>
+                        </div>
                     </div>
 
                     <div class="setting-row">
-                        <label for="ai_Brightness">AI Brightness:</label>
-                        <select id="ai_Brightness" onchange="setAISetting('ai_Brightness', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
+                        <label>AI Brightness:</label>
+                        <div>
+                            <button onclick="setAISetting('ai_Brightness', 'on')" style="margin-right: 10px; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Set ON</button>
+                            <button onclick="setAISetting('ai_Brightness', 'off')" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Set OFF</button>
+                        </div>
                     </div>
 
                     <div class="setting-row">
-                        <label for="ai_Genre">AI Genre:</label>
-                        <select id="ai_Genre" onchange="setAISetting('ai_Genre', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
+                        <label>AI Genre:</label>
+                        <div>
+                            <button onclick="setAISetting('ai_Genre', 'on')" style="margin-right: 10px; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Set ON</button>
+                            <button onclick="setAISetting('ai_Genre', 'off')" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Set OFF</button>
+                        </div>
                     </div>
                 </div>
 
