@@ -865,15 +865,18 @@
                 } else if (message.type === 'error') {
                     // Handle errors gracefully - some settings may not be available on all TV models
                     if (message.id.startsWith('get_')) {
-                        // Silently ignore errors when fetching settings (setting may not exist on this model)
-                        console.log(`Some settings not available in ${message.id}:`, message.payload?.errorText || message.error);
-
-                        // Parse which request failed and mark those settings as unavailable
+                        // Parse which keys failed and mark them as unavailable
                         const errorText = message.payload?.errorText || message.error || '';
-                        if (errorText.includes('not allowed') || errorText.includes('not available')) {
-                            // Extract keys from the original request and grey them out
-                            // Note: We'd need to track the keys per request, but for now we'll handle it on SET
-                            console.log(`Settings in ${message.id} not available on this TV`);
+                        console.log(`Some settings not available in ${message.id}:`, errorText);
+
+                        if (errorText.includes('not allowed') || errorText.includes('not available') || errorText.includes("doesn't support")) {
+                            // Get all keys that were requested in this batch
+                            const requestedKeys = requestedSettings[message.id] || [];
+
+                            if (requestedKeys.length > 0) {
+                                console.warn(`Marking ${requestedKeys.length} settings as unavailable from ${message.id}:`, requestedKeys);
+                                requestedKeys.forEach(key => markSettingUnavailable(key));
+                            }
                         }
 
                         // Track refresh completion even on error
@@ -1172,7 +1175,23 @@
 
         // Update UI with received settings
         function updateSettingsUI(settings) {
-            for (const [key, value] of Object.entries(settings)) {
+            for (let [key, value] of Object.entries(settings)) {
+                // Handle special case: blackLevel sometimes returns an object with TV standards
+                if (key === 'blackLevel' && typeof value === 'object' && value !== null) {
+                    // Extract unique values from the object
+                    const uniqueValues = [...new Set(Object.values(value))];
+                    if (uniqueValues.length === 1) {
+                        // All standards have the same value, use it
+                        value = uniqueValues[0];
+                        console.log(`blackLevel object normalized to: ${value}`);
+                    } else {
+                        // Different values per standard, can't display in simple dropdown
+                        console.warn(`blackLevel has multiple values per TV standard:`, value);
+                        markSettingUnavailable(key);
+                        continue;
+                    }
+                }
+
                 const element = document.getElementById(key);
                 if (element) {
                     // Successfully retrieved - ensure it's enabled
