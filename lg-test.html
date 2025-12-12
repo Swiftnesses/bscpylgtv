@@ -935,8 +935,8 @@
                                         }
                                     };
 
-                                    // Add current_app for motion settings (required for truMotionMode)
-                                    if (message.id.includes('_motion_')) {
+                                    // Add current_app for truMotionMode only
+                                    if (message.id.includes('_trumotion_') || successfulKeys.includes('truMotionMode')) {
                                         retryRequest.payload.current_app = true;
                                     }
 
@@ -976,8 +976,8 @@
                                         }
                                     };
 
-                                    // Add current_app for motion settings (required for truMotionMode)
-                                    if (message.id.includes('_motion_')) {
+                                    // Add current_app for truMotionMode only
+                                    if (message.id.includes('_trumotion_') || key === 'truMotionMode') {
                                         individualRequest.payload.current_app = true;
                                     }
 
@@ -1016,8 +1016,8 @@
                                         }
                                     };
 
-                                    // Add current_app for motion settings (required for truMotionMode)
-                                    if (message.id.includes('_motion_')) {
+                                    // Add current_app for truMotionMode only
+                                    if (message.id.includes('_trumotion_') || key === 'truMotionMode') {
                                         individualRequest.payload.current_app = true;
                                     }
 
@@ -1300,24 +1300,43 @@
                 }
             }));
 
-            // Motion settings - truMotionMode requires current_app parameter
+            // Motion settings - split into two requests
+            // 1. truMotionMode requires current_app parameter
             messageId++;
-            const motionKeys = ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
-            requestedSettings[`get_motion_${messageId}`] = motionKeys;
+            requestedSettings[`get_trumotion_${messageId}`] = ["truMotionMode"];
+            const truMotionRequest = {
+                "id": `get_trumotion_${messageId}`,
+                "type": "request",
+                "uri": "ssap://settings/getSystemSettings",
+                "payload": {
+                    "category": "picture",
+                    "keys": ["truMotionMode"],
+                    "current_app": true  // Required for truMotionMode
+                }
+            };
+            console.log(`📤 Requesting truMotionMode with current_app=true:`, truMotionRequest);
+            ws.send(JSON.stringify(truMotionRequest));
+
+            // 2. Other motion settings WITHOUT current_app
+            messageId++;
+            const otherMotionKeys = ["truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
+            requestedSettings[`get_motion_${messageId}`] = otherMotionKeys;
             const motionRequest = {
                 "id": `get_motion_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": motionKeys,
-                    "current_app": true  // Required for truMotionMode
+                    "keys": otherMotionKeys
                 }
             };
-            console.log(`📤 Requesting motion settings with current_app=true (category: picture):`, motionRequest);
+            console.log(`📤 Requesting other motion settings (no current_app):`, motionRequest);
             ws.send(JSON.stringify(motionRequest));
 
-            // AI settings
+            // AI settings - NOTE: Python library only shows SET operations for AI settings,
+            // never GET. This suggests AI settings may not be readable via the API.
+            // Commenting out for now since they always fail with "doesn't support the key(s)"
+            /*
             messageId++;
             const aiKeys = ["ai_Picture", "ai_Brightness", "ai_Genre"];
             requestedSettings[`get_ai_${messageId}`] = aiKeys;
@@ -1330,6 +1349,7 @@
                     "keys": aiKeys
                 }
             }));
+            */
         }
 
         // Update UI with received settings
