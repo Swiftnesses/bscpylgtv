@@ -968,7 +968,14 @@
                                 return;
                             }
                         } else {
-                            console.log('No retry needed (error not related to unavailable keys)');
+                            // Generic error (after retries) - mark all requested keys as unavailable
+                            const requestedKeys = requestedSettings[message.id] || [];
+                            if (requestedKeys.length > 0) {
+                                console.log('⚠️ Generic error after retries - marking all requested keys unavailable:', requestedKeys);
+                                requestedKeys.forEach(key => markSettingUnavailable(key));
+                            } else {
+                                console.log('No retry needed (error not related to unavailable keys)');
+                            }
                             console.groupEnd();
                         }
 
