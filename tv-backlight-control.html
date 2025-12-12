@@ -568,8 +568,8 @@
                     <h3>Motion Settings</h3>
 
                     <div class="setting-row">
-                        <label for="truMotionMode">TruMotion Mode:</label>
-                        <select id="truMotionMode" onchange="setSetting('truMotionMode', this.value, true)">
+                        <label for="truMotion">TruMotion Mode:</label>
+                        <select id="truMotion" onchange="setSetting('truMotion', this.value, true)">
                             <option value="off">Off</option>
                             <option value="natural">Natural</option>
                             <option value="smooth">Smooth</option>
@@ -1135,7 +1135,7 @@
             showStatus(`Setting ${settingName}...`, 'info');
 
             // Handle TruMotion mode changes
-            if (settingName === 'truMotionMode') {
+            if (settingName === 'truMotion') {
                 const blurRow = document.getElementById('truMotionBlurRow');
                 const judderRow = document.getElementById('truMotionJudderRow');
                 if (value === 'user') {
@@ -1283,7 +1283,7 @@
 
             // Motion settings
             messageId++;
-            const motionKeys = ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
+            const motionKeys = ["truMotion", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
             requestedSettings[`get_motion_${messageId}`] = motionKeys;
             const motionRequest = {
                 "id": `get_motion_${messageId}`,
@@ -1358,10 +1358,10 @@
             }
 
             // Handle TruMotion visibility
-            if (settings.truMotionMode) {
+            if (settings.truMotion) {
                 const blurRow = document.getElementById('truMotionBlurRow');
                 const judderRow = document.getElementById('truMotionJudderRow');
-                if (settings.truMotionMode === 'user') {
+                if (settings.truMotion === 'user') {
                     blurRow.style.display = 'block';
                     judderRow.style.display = 'block';
                 } else {
