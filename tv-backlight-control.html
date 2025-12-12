@@ -568,8 +568,8 @@
                     <h3>Motion Settings</h3>
 
                     <div class="setting-row">
-                        <label for="truMotion">TruMotion Mode:</label>
-                        <select id="truMotion" onchange="setSetting('truMotion', this.value, true)">
+                        <label for="truMotionMode">TruMotion Mode:</label>
+                        <select id="truMotionMode" onchange="setSetting('truMotionMode', this.value, true)">
                             <option value="off">Off</option>
                             <option value="natural">Natural</option>
                             <option value="smooth">Smooth</option>
@@ -934,6 +934,12 @@
                                             "keys": successfulKeys
                                         }
                                     };
+
+                                    // Add current_app for motion settings (required for truMotionMode)
+                                    if (message.id.includes('_motion_')) {
+                                        retryRequest.payload.current_app = true;
+                                    }
+
                                     console.log(`📤 Sending retry request (category: ${category}):`, retryRequest);
                                     ws.send(JSON.stringify(retryRequest));
                                     // Don't decrement pendingRefreshRequests yet, wait for retry
@@ -960,7 +966,7 @@
                                         category = 'aiPicture';
                                     }
 
-                                    ws.send(JSON.stringify({
+                                    const individualRequest = {
                                         "id": individualId,
                                         "type": "request",
                                         "uri": "ssap://settings/getSystemSettings",
@@ -968,7 +974,14 @@
                                             "category": category,
                                             "keys": [key]
                                         }
-                                    }));
+                                    };
+
+                                    // Add current_app for motion settings (required for truMotionMode)
+                                    if (message.id.includes('_motion_')) {
+                                        individualRequest.payload.current_app = true;
+                                    }
+
+                                    ws.send(JSON.stringify(individualRequest));
                                 });
                                 // Don't decrement pendingRefreshRequests yet, wait for individual responses
                                 return;
@@ -1002,6 +1015,12 @@
                                             "keys": [key]
                                         }
                                     };
+
+                                    // Add current_app for motion settings (required for truMotionMode)
+                                    if (message.id.includes('_motion_')) {
+                                        individualRequest.payload.current_app = true;
+                                    }
+
                                     console.log(`📤 Trying individual key (${category}):`, individualRequest);
                                     ws.send(JSON.stringify(individualRequest));
                                 });
@@ -1135,7 +1154,7 @@
             showStatus(`Setting ${settingName}...`, 'info');
 
             // Handle TruMotion mode changes
-            if (settingName === 'truMotion') {
+            if (settingName === 'truMotionMode') {
                 const blurRow = document.getElementById('truMotionBlurRow');
                 const judderRow = document.getElementById('truMotionJudderRow');
                 if (value === 'user') {
@@ -1281,9 +1300,9 @@
                 }
             }));
 
-            // Motion settings
+            // Motion settings - truMotionMode requires current_app parameter
             messageId++;
-            const motionKeys = ["truMotion", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
+            const motionKeys = ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
             requestedSettings[`get_motion_${messageId}`] = motionKeys;
             const motionRequest = {
                 "id": `get_motion_${messageId}`,
@@ -1291,27 +1310,12 @@
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": motionKeys
+                    "keys": motionKeys,
+                    "current_app": true  // Required for truMotionMode
                 }
             };
-            console.log(`📤 Requesting motion settings (category: picture):`, motionRequest);
+            console.log(`📤 Requesting motion settings with current_app=true (category: picture):`, motionRequest);
             ws.send(JSON.stringify(motionRequest));
-
-            // Try alternative TruMotion key names
-            messageId++;
-            const altMotionKeys = ["motion", "Motion", "tru_motion"];
-            requestedSettings[`get_motion_alt_${messageId}`] = altMotionKeys;
-            const altMotionRequest = {
-                "id": `get_motion_alt_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": altMotionKeys
-                }
-            };
-            console.log(`📤 Trying alternative TruMotion key names (category: picture):`, altMotionRequest);
-            ws.send(JSON.stringify(altMotionRequest));
 
             // AI settings
             messageId++;
@@ -1374,10 +1378,10 @@
             }
 
             // Handle TruMotion visibility
-            if (settings.truMotion) {
+            if (settings.truMotionMode) {
                 const blurRow = document.getElementById('truMotionBlurRow');
                 const judderRow = document.getElementById('truMotionJudderRow');
-                if (settings.truMotion === 'user') {
+                if (settings.truMotionMode === 'user') {
                     blurRow.style.display = 'block';
                     judderRow.style.display = 'block';
                 } else {
