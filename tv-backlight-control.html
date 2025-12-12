@@ -666,6 +666,7 @@
         let connected = false;
         let useSecure = true;  // New TVs require wss:// on port 3001
         let pendingRefreshRequests = 0;
+        let requestedSettings = {};  // Track which settings we requested per message ID
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -838,6 +839,16 @@
                         if (message.id.startsWith('set_')) {
                             showStatus('Setting applied successfully', 'success');
                         } else if (message.id.startsWith('get_')) {
+                            // Check which requested settings were NOT returned and grey them out
+                            const requestedKeys = requestedSettings[message.id] || [];
+                            const returnedKeys = Object.keys(message.payload.settings);
+                            const missingKeys = requestedKeys.filter(key => !returnedKeys.includes(key));
+
+                            if (missingKeys.length > 0) {
+                                console.warn(`Settings not returned by TV in ${message.id}:`, missingKeys);
+                                missingKeys.forEach(key => markSettingUnavailable(key));
+                            }
+
                             // Quietly update UI for get operations
                             const settingsCount = Object.keys(message.payload.settings).length;
                             console.log(`Loaded ${settingsCount} settings from ${message.id}`);
@@ -1058,88 +1069,103 @@
 
             showStatus('Refreshing settings...', 'info');
             pendingRefreshRequests = 7;  // Number of refresh requests we're about to send
+            requestedSettings = {};  // Clear previous tracking
 
             // Basic settings
             messageId++;
+            const basicKeys = ["pictureMode", "backlight", "contrast", "brightness", "color", "tint", "sharpness", "colorTemperature"];
+            requestedSettings[`get_basic_${messageId}`] = basicKeys;
             ws.send(JSON.stringify({
                 "id": `get_basic_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["pictureMode", "backlight", "contrast", "brightness", "color", "tint", "sharpness", "colorTemperature"]
+                    "keys": basicKeys
                 }
             }));
 
             // Advanced picture settings
             messageId++;
+            const advancedKeys = ["blackLevel", "gamma", "colorGamut", "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution"];
+            requestedSettings[`get_advanced_${messageId}`] = advancedKeys;
             ws.send(JSON.stringify({
                 "id": `get_advanced_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["blackLevel", "gamma", "colorGamut", "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution"]
+                    "keys": advancedKeys
                 }
             }));
 
             // Noise reduction & other
             messageId++;
+            const nrKeys = ["noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema", "eyeComfortMode", "energySaving"];
+            requestedSettings[`get_nr_${messageId}`] = nrKeys;
             ws.send(JSON.stringify({
                 "id": `get_nr_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema", "eyeComfortMode", "energySaving"]
+                    "keys": nrKeys
                 }
             }));
 
             // HDR & gaming settings
             messageId++;
+            const hdrKeys = ["hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail", "blackStabilizer", "whiteStabilizer"];
+            requestedSettings[`get_hdr_${messageId}`] = hdrKeys;
             ws.send(JSON.stringify({
                 "id": `get_hdr_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail", "blackStabilizer", "whiteStabilizer"]
+                    "keys": hdrKeys
                 }
             }));
 
             // White balance settings
             messageId++;
+            const wbKeys = ["whiteBalanceColorTemperature", "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset", "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain", "whiteBalanceBlueGain"];
+            requestedSettings[`get_wb_${messageId}`] = wbKeys;
             ws.send(JSON.stringify({
                 "id": `get_wb_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["whiteBalanceColorTemperature", "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset", "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain", "whiteBalanceBlueGain"]
+                    "keys": wbKeys
                 }
             }));
 
             // Motion settings
             messageId++;
+            const motionKeys = ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
+            requestedSettings[`get_motion_${messageId}`] = motionKeys;
             ws.send(JSON.stringify({
                 "id": `get_motion_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "picture",
-                    "keys": ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"]
+                    "keys": motionKeys
                 }
             }));
 
             // AI settings
             messageId++;
+            const aiKeys = ["ai_Picture", "ai_Brightness", "ai_Genre"];
+            requestedSettings[`get_ai_${messageId}`] = aiKeys;
             ws.send(JSON.stringify({
                 "id": `get_ai_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
                 "payload": {
                     "category": "aiPicture",
-                    "keys": ["ai_Picture", "ai_Brightness", "ai_Genre"]
+                    "keys": aiKeys
                 }
             }));
         }
