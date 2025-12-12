@@ -365,6 +365,7 @@
                         <select id="gamma" onchange="setSetting('gamma', this.value)">
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
+                            <option value="mediumHavingLevel">Medium (Level) - G5</option>
                             <option value="high1">High 1</option>
                             <option value="high2">High 2</option>
                         </select>
@@ -505,12 +506,12 @@
 
                     <div class="setting-row">
                         <label for="blackStabilizer">Black Stabilizer: <span class="setting-value" id="blackStabilizerValue">0</span></label>
-                        <input type="range" id="blackStabilizer" min="0" max="30" value="0" oninput="updateSliderDisplay('blackStabilizer', this.value)" onchange="setSetting('blackStabilizer', parseInt(this.value))">
+                        <input type="range" id="blackStabilizer" min="0" max="20" value="0" oninput="updateSliderDisplay('blackStabilizer', this.value)" onchange="setSetting('blackStabilizer', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
                         <label for="whiteStabilizer">White Stabilizer: <span class="setting-value" id="whiteStabilizerValue">0</span></label>
-                        <input type="range" id="whiteStabilizer" min="0" max="30" value="0" oninput="updateSliderDisplay('whiteStabilizer', this.value)" onchange="setSetting('whiteStabilizer', parseInt(this.value))">
+                        <input type="range" id="whiteStabilizer" min="0" max="20" value="0" oninput="updateSliderDisplay('whiteStabilizer', this.value)" onchange="setSetting('whiteStabilizer', parseInt(this.value))">
                     </div>
                 </div>
 
