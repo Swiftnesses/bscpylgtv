@@ -844,14 +844,19 @@
                             const returnedKeys = Object.keys(message.payload.settings);
                             const missingKeys = requestedKeys.filter(key => !returnedKeys.includes(key));
 
+                            // Detailed logging for diagnostics
+                            console.group(`📥 GET Response: ${message.id}`);
+                            console.log('Requested:', requestedKeys);
+                            console.log('Returned:', returnedKeys);
                             if (missingKeys.length > 0) {
-                                console.warn(`Settings not returned by TV in ${message.id}:`, missingKeys);
+                                console.warn('⚠️ Missing keys:', missingKeys);
+                            }
+                            console.log('Values:', message.payload.settings);
+                            console.groupEnd();
+
+                            if (missingKeys.length > 0) {
                                 missingKeys.forEach(key => markSettingUnavailable(key));
                             }
-
-                            // Quietly update UI for get operations
-                            const settingsCount = Object.keys(message.payload.settings).length;
-                            console.log(`Loaded ${settingsCount} settings from ${message.id}`);
 
                             // Track refresh completion
                             if (pendingRefreshRequests > 0) {
@@ -867,7 +872,10 @@
                     if (message.id.startsWith('get_')) {
                         // Parse which keys failed and mark them as unavailable
                         const errorText = message.payload?.errorText || message.error || '';
-                        console.log(`Some settings not available in ${message.id}:`, errorText);
+
+                        console.group(`❌ GET Error: ${message.id}`);
+                        console.log('Error text:', errorText);
+                        console.log('Requested keys:', requestedSettings[message.id] || []);
 
                         if (errorText.includes('not allowed') || errorText.includes('not available') || errorText.includes("doesn't support")) {
                             // Extract which specific key(s) failed from the error message
@@ -881,15 +889,18 @@
                             }
 
                             // Pattern 2: "doesn't support the key(s): key1,key2,key3"
-                            const pattern2 = /key\(s\):\s*([^"]+)/;
+                            // Fixed: match after colon, not including "key(s):"
+                            const pattern2 = /key\(s\):\s*(.+)$/;
                             const match2 = errorText.match(pattern2);
                             if (match2) {
-                                const keys = match2[1].split(',').map(k => k.trim());
+                                const keys = match2[1].split(',').map(k => k.trim()).filter(k => k.length > 1);
                                 failedKeys.push(...keys);
                             }
 
+                            console.log('Parsed failed keys:', failedKeys);
+
                             if (failedKeys.length > 0) {
-                                console.warn(`Marking ${failedKeys.length} specific failed keys as unavailable:`, failedKeys);
+                                console.log(`✓ Marking failed keys unavailable:`, failedKeys);
                                 failedKeys.forEach(key => markSettingUnavailable(key));
 
                                 // Retry the successful keys from this batch
@@ -897,7 +908,9 @@
                                 const successfulKeys = requestedKeys.filter(key => !failedKeys.includes(key));
 
                                 if (successfulKeys.length > 0) {
-                                    console.log(`Retrying ${successfulKeys.length} keys that weren't in error:`, successfulKeys);
+                                    console.log(`🔄 Retrying ${successfulKeys.length} keys:`, successfulKeys);
+                                    console.groupEnd();
+
                                     messageId++;
                                     const retryId = `${message.id}_retry_${messageId}`;
                                     requestedSettings[retryId] = successfulKeys;
@@ -919,13 +932,44 @@
                                     }));
                                     // Don't decrement pendingRefreshRequests yet, wait for retry
                                     return;
+                                } else {
+                                    console.log('✓ No keys to retry');
+                                    console.groupEnd();
                                 }
                             } else {
-                                // Couldn't parse error, mark all as unavailable
+                                // Couldn't parse error, try individual requests for each key
                                 const requestedKeys = requestedSettings[message.id] || [];
-                                console.warn(`Could not parse error, marking all ${requestedKeys.length} keys as unavailable:`, requestedKeys);
-                                requestedKeys.forEach(key => markSettingUnavailable(key));
+                                console.warn(`⚠️ Could not parse specific failed keys`);
+                                console.log(`🔄 Trying each of ${requestedKeys.length} keys individually`);
+                                console.groupEnd();
+
+                                // Try each key individually to see which ones work
+                                requestedKeys.forEach(key => {
+                                    messageId++;
+                                    const individualId = `${message.id}_individual_${key}_${messageId}`;
+                                    requestedSettings[individualId] = [key];
+
+                                    let category = 'picture';
+                                    if (message.id.includes('_ai_')) {
+                                        category = 'aiPicture';
+                                    }
+
+                                    ws.send(JSON.stringify({
+                                        "id": individualId,
+                                        "type": "request",
+                                        "uri": "ssap://settings/getSystemSettings",
+                                        "payload": {
+                                            "category": category,
+                                            "keys": [key]
+                                        }
+                                    }));
+                                });
+                                // Don't decrement pendingRefreshRequests yet, wait for individual responses
+                                return;
                             }
+                        } else {
+                            console.log('No retry needed (error not related to unavailable keys)');
+                            console.groupEnd();
                         }
 
                         // Track refresh completion even on error
