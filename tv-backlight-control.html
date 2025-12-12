@@ -1160,8 +1160,16 @@
                         element.value = value;
                         updateSliderDisplay(key, value);
                     } else if (element.tagName === 'SELECT') {
-                        element.value = value;
+                        // Check if the value exists in the dropdown options
+                        const optionExists = Array.from(element.options).some(opt => opt.value === value);
+                        if (optionExists) {
+                            element.value = value;
+                        } else {
+                            console.warn(`Setting ${key}: value "${value}" not found in dropdown options`, Array.from(element.options).map(o => o.value));
+                        }
                     }
+                } else {
+                    console.warn(`Setting ${key}: element not found in HTML`);
                 }
             }
 
