@@ -974,11 +974,46 @@
                                 return;
                             }
                         } else {
-                            // Generic error - don't mark as unavailable yet, could be temporary or wrong category
+                            // Generic error with no specific key info - try each key individually
                             const requestedKeys = requestedSettings[message.id] || [];
-                            console.log('⚠️ Generic error (not marking unavailable - could be wrong category or temporary)');
-                            console.log('Affected keys:', requestedKeys);
-                            console.groupEnd();
+
+                            // Only try individual requests if we haven't already (avoid infinite retry loops)
+                            if (requestedKeys.length > 1 && !message.id.includes('_individual_')) {
+                                console.warn(`⚠️ Generic error - trying ${requestedKeys.length} keys individually`);
+                                console.groupEnd();
+
+                                // Try each key individually to see which ones work
+                                requestedKeys.forEach(key => {
+                                    messageId++;
+                                    const individualId = `${message.id}_individual_${key}_${messageId}`;
+                                    requestedSettings[individualId] = [key];
+
+                                    let category = 'picture';
+                                    if (message.id.includes('_ai_')) {
+                                        category = 'aiPicture';
+                                    }
+
+                                    const individualRequest = {
+                                        "id": individualId,
+                                        "type": "request",
+                                        "uri": "ssap://settings/getSystemSettings",
+                                        "payload": {
+                                            "category": category,
+                                            "keys": [key]
+                                        }
+                                    };
+                                    console.log(`📤 Trying individual key (${category}):`, individualRequest);
+                                    ws.send(JSON.stringify(individualRequest));
+                                });
+                                // Don't decrement pendingRefreshRequests yet, wait for individual responses
+                                return;
+                            } else {
+                                // Already tried individually or single key - mark as unavailable
+                                console.log('⚠️ Generic error (marking unavailable - already tried individually)');
+                                console.log('Affected keys:', requestedKeys);
+                                requestedKeys.forEach(key => markSettingUnavailable(key));
+                                console.groupEnd();
+                            }
                         }
 
                         // Track refresh completion even on error
