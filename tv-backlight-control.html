@@ -974,14 +974,10 @@
                                 return;
                             }
                         } else {
-                            // Generic error (after retries) - mark all requested keys as unavailable
+                            // Generic error - don't mark as unavailable yet, could be temporary or wrong category
                             const requestedKeys = requestedSettings[message.id] || [];
-                            if (requestedKeys.length > 0) {
-                                console.log('⚠️ Generic error after retries - marking all requested keys unavailable:', requestedKeys);
-                                requestedKeys.forEach(key => markSettingUnavailable(key));
-                            } else {
-                                console.log('No retry needed (error not related to unavailable keys)');
-                            }
+                            console.log('⚠️ Generic error (not marking unavailable - could be wrong category or temporary)');
+                            console.log('Affected keys:', requestedKeys);
                             console.groupEnd();
                         }
 
