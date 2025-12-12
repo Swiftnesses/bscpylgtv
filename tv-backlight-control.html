@@ -870,11 +870,60 @@
                         console.log(`Some settings not available in ${message.id}:`, errorText);
 
                         if (errorText.includes('not allowed') || errorText.includes('not available') || errorText.includes("doesn't support")) {
-                            // Get all keys that were requested in this batch
-                            const requestedKeys = requestedSettings[message.id] || [];
+                            // Extract which specific key(s) failed from the error message
+                            const failedKeys = [];
 
-                            if (requestedKeys.length > 0) {
-                                console.warn(`Marking ${requestedKeys.length} settings as unavailable from ${message.id}:`, requestedKeys);
+                            // Pattern 1: "Some keys are not allowed for the request. ( keyName )"
+                            const pattern1 = /\(\s*([^)]+)\s*\)/;
+                            const match1 = errorText.match(pattern1);
+                            if (match1) {
+                                failedKeys.push(match1[1].trim());
+                            }
+
+                            // Pattern 2: "doesn't support the key(s): key1,key2,key3"
+                            const pattern2 = /key\(s\):\s*([^"]+)/;
+                            const match2 = errorText.match(pattern2);
+                            if (match2) {
+                                const keys = match2[1].split(',').map(k => k.trim());
+                                failedKeys.push(...keys);
+                            }
+
+                            if (failedKeys.length > 0) {
+                                console.warn(`Marking ${failedKeys.length} specific failed keys as unavailable:`, failedKeys);
+                                failedKeys.forEach(key => markSettingUnavailable(key));
+
+                                // Retry the successful keys from this batch
+                                const requestedKeys = requestedSettings[message.id] || [];
+                                const successfulKeys = requestedKeys.filter(key => !failedKeys.includes(key));
+
+                                if (successfulKeys.length > 0) {
+                                    console.log(`Retrying ${successfulKeys.length} keys that weren't in error:`, successfulKeys);
+                                    messageId++;
+                                    const retryId = `${message.id}_retry_${messageId}`;
+                                    requestedSettings[retryId] = successfulKeys;
+
+                                    // Determine category from original message ID
+                                    let category = 'picture';
+                                    if (message.id.includes('_ai_')) {
+                                        category = 'aiPicture';
+                                    }
+
+                                    ws.send(JSON.stringify({
+                                        "id": retryId,
+                                        "type": "request",
+                                        "uri": "ssap://settings/getSystemSettings",
+                                        "payload": {
+                                            "category": category,
+                                            "keys": successfulKeys
+                                        }
+                                    }));
+                                    // Don't decrement pendingRefreshRequests yet, wait for retry
+                                    return;
+                                }
+                            } else {
+                                // Couldn't parse error, mark all as unavailable
+                                const requestedKeys = requestedSettings[message.id] || [];
+                                console.warn(`Could not parse error, marking all ${requestedKeys.length} keys as unavailable:`, requestedKeys);
                                 requestedKeys.forEach(key => markSettingUnavailable(key));
                             }
                         }
