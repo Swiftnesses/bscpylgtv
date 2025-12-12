@@ -846,12 +846,14 @@
 
                             // Detailed logging for diagnostics
                             console.group(`📥 GET Response: ${message.id}`);
+                            console.log('Category:', message.payload.category);
                             console.log('Requested:', requestedKeys);
                             console.log('Returned:', returnedKeys);
                             if (missingKeys.length > 0) {
                                 console.warn('⚠️ Missing keys:', missingKeys);
                             }
                             console.log('Values:', message.payload.settings);
+                            console.log('Full response:', message);
                             console.groupEnd();
 
                             if (missingKeys.length > 0) {
@@ -876,6 +878,8 @@
                         console.group(`❌ GET Error: ${message.id}`);
                         console.log('Error text:', errorText);
                         console.log('Requested keys:', requestedSettings[message.id] || []);
+                        console.log('Full error payload:', message.payload);
+                        console.log('Full error message:', message);
 
                         if (errorText.includes('not allowed') || errorText.includes('not available') || errorText.includes("doesn't support")) {
                             // Extract which specific key(s) failed from the error message
@@ -921,7 +925,7 @@
                                         category = 'aiPicture';
                                     }
 
-                                    ws.send(JSON.stringify({
+                                    const retryRequest = {
                                         "id": retryId,
                                         "type": "request",
                                         "uri": "ssap://settings/getSystemSettings",
@@ -929,7 +933,9 @@
                                             "category": category,
                                             "keys": successfulKeys
                                         }
-                                    }));
+                                    };
+                                    console.log(`📤 Sending retry request (category: ${category}):`, retryRequest);
+                                    ws.send(JSON.stringify(retryRequest));
                                     // Don't decrement pendingRefreshRequests yet, wait for retry
                                     return;
                                 } else {
@@ -1248,7 +1254,7 @@
             messageId++;
             const motionKeys = ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
             requestedSettings[`get_motion_${messageId}`] = motionKeys;
-            ws.send(JSON.stringify({
+            const motionRequest = {
                 "id": `get_motion_${messageId}`,
                 "type": "request",
                 "uri": "ssap://settings/getSystemSettings",
@@ -1256,7 +1262,9 @@
                     "category": "picture",
                     "keys": motionKeys
                 }
-            }));
+            };
+            console.log(`📤 Requesting motion settings (category: picture):`, motionRequest);
+            ws.send(JSON.stringify(motionRequest));
 
             // AI settings
             messageId++;
