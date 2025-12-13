@@ -12,8 +12,8 @@
         }
 
         :root {
-            --primary: #a50034;
-            --primary-hover: #8a002b;
+            --primary: #1976d2;
+            --primary-hover: #1565c0;
             --bg: #fafafa;
             --surface: #ffffff;
             --border: #e0e0e0;
@@ -67,7 +67,7 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, var(--primary) 0%, #c00040 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #2196f3 100%);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -253,6 +253,7 @@
             outline: none;
             border-color: var(--primary);
             background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
         }
 
         /* Buttons */
@@ -406,6 +407,7 @@
         .select:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
         }
 
         .select:disabled {
@@ -980,7 +982,7 @@
 
                     <div class="setting-item">
                         <label class="setting-label">Motion Eye Care</label>
-                        <select id="motionEyeCare" class="select" onchange="setSetting('motionEyeCare', this.value)">
+                        <select id="motionEyeCare" class="select" onchange="setSetting('motionEyeCare', this.value, true)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
                         </select>
@@ -1420,8 +1422,8 @@
                 {id: 'nr', keys: ["noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema", "eyeComfortMode", "energySaving"]},
                 {id: 'hdr', keys: ["hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail", "blackStabilizer", "whiteStabilizer"]},
                 {id: 'wb', keys: ["whiteBalanceColorTemperature", "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset", "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain", "whiteBalanceBlueGain"]},
-                {id: 'trumotion', keys: ["truMotionMode"], currentApp: true},
-                {id: 'motion', keys: ["truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"]}
+                {id: 'trumotion', keys: ["truMotionMode", "truMotionBlur", "truMotionJudder", "motionEyeCare"], currentApp: true},
+                {id: 'motion', keys: ["motionProOLED"]}
             ];
 
             requests.forEach(req => {
