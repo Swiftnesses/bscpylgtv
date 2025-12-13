@@ -3,389 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LG TV Picture Control</title>
+    <title>LG TV Control</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: #111;
+            border-bottom: 1px solid #222;
+            padding: 16px 0;
         }
 
         .container {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         h1 {
-            color: #1a1a1a;
-            margin-top: 0;
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #a50034 0%, #ff1744 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 20px;
+            font-weight: 600;
         }
-        .input-group {
-            margin-bottom: 24px;
+
+        .panel {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background-color: #f7fafc;
+            max-width: 300px;
+            padding: 8px 12px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
         }
 
         input[type="text"]:focus {
             outline: none;
-            border-color: #a50034;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(165, 0, 52, 0.1);
+            border-color: #c00;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
         }
 
         button {
-            background: linear-gradient(135deg, #a50034 0%, #d6003d 100%);
-            color: white;
-            padding: 12px 28px;
+            padding: 8px 16px;
+            background: #c00;
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            margin-right: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(165, 0, 52, 0.3);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(165, 0, 52, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        button.secondary {
-            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-            box-shadow: 0 4px 12px rgba(74, 85, 104, 0.3);
-        }
-
-        button.secondary:hover {
-            box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
-        }
-        .cert-help {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #fff3e0;
-            border-left: 4px solid #f57c00;
             border-radius: 4px;
-            font-size: 14px;
-        }
-        .cert-help.show {
-            display: block;
-        }
-        .cert-help strong {
-            display: block;
-            margin-bottom: 8px;
-        }
-        .slider-group {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        input[type="range"] {
-            width: 100%;
-            margin: 10px 0;
-        }
-        .value-display {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #a50034;
-            margin: 10px 0;
-        }
-        .status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .status.info {
-            background-color: #e3f2fd;
-            color: #1976d2;
-        }
-        .status.success {
-            background-color: #e8f5e9;
-            color: #388e3c;
-        }
-        .status.error {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-        .status.warning {
-            background-color: #fff3e0;
-            color: #f57c00;
-        }
-        .controls {
-            display: none;
-        }
-        .controls.active {
-            display: block;
-        }
-        .section {
-            margin-top: 24px;
-            padding: 24px;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .section:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-        }
-
-        .section h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #2d3748;
-            font-size: 20px;
-            font-weight: 700;
-            border-bottom: 3px solid #a50034;
-            padding-bottom: 10px;
-            letter-spacing: 0.3px;
-        }
-        .setting-row {
-            margin-bottom: 15px;
-        }
-        .setting-row label {
-            font-size: 14px;
-        }
-        .setting-value {
-            display: inline-block;
-            min-width: 50px;
-            text-align: center;
-            font-weight: bold;
-            color: #a50034;
-        }
-        select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 15px;
-            background-color: white;
+            font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: 500;
         }
 
-        select:hover:not(:disabled) {
-            border-color: #cbd5e0;
+        button:hover:not(:disabled) {
+            background: #a00;
         }
 
-        select:focus {
-            outline: none;
-            border-color: #a50034;
-            box-shadow: 0 0 0 3px rgba(165, 0, 52, 0.1);
-        }
-
-        select:disabled, input[type="range"]:disabled {
-            opacity: 0.5;
+        button:disabled {
+            background: #222;
+            color: #555;
             cursor: not-allowed;
-            background-color: #f7fafc;
-        }
-        .setting-row.unavailable label {
-            color: #999;
-        }
-        .setting-row.unavailable label::after {
-            content: " (not available)";
-            font-size: 11px;
-            color: #999;
-            font-style: italic;
-            font-weight: normal;
-            text-decoration: none;
-        }
-        input[type="range"] {
-            width: calc(100% - 60px);
-            margin: 12px 0;
-            vertical-align: middle;
-            height: 6px;
-            border-radius: 3px;
-            background: #e2e8f0;
-            outline: none;
-            -webkit-appearance: none;
         }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #a50034 0%, #d6003d 100%);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(165, 0, 52, 0.4);
-            transition: all 0.3s ease;
+        button.secondary {
+            background: #222;
+            color: #aaa;
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 4px 12px rgba(165, 0, 52, 0.6);
+        button.secondary:hover:not(:disabled) {
+            background: #2a2a2a;
         }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #a50034 0%, #d6003d 100%);
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 8px rgba(165, 0, 52, 0.4);
+        button.green {
+            background: #0a0;
+        }
+
+        button.green:hover:not(:disabled) {
+            background: #080;
+        }
+
+        .status {
+            margin-top: 12px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .status.info { background: #003; color: #99f; }
+        .status.success { background: #030; color: #9f9; }
+        .status.error { background: #300; color: #f99; }
+        .status.warning { background: #330; color: #ff9; }
+
+        .cert-help {
+            display: none;
+            margin-top: 12px;
+            padding: 10px;
+            background: #221100;
+            border-left: 2px solid #f90;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .cert-help.show { display: block; }
+
+        .controls {
+            display: none;
+        }
+
+        .controls.active {
+            display: block;
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid #e2e8f0;
-            margin-bottom: 24px;
-            gap: 4px;
+            gap: 20px;
+            border-bottom: 1px solid #222;
+            margin: 20px 0;
         }
 
         .tab {
-            padding: 14px 24px;
-            cursor: pointer;
-            background-color: #f7fafc;
+            padding: 10px 0;
+            background: none;
             border: none;
-            border-bottom: 3px solid transparent;
-            font-size: 15px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border-radius: 8px 8px 0 0;
-            color: #718096;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
         }
 
         .tab:hover:not(.active) {
-            background-color: #edf2f7;
-            color: #4a5568;
+            color: #999;
         }
 
         .tab.active {
-            background-color: white;
-            border-bottom: 3px solid #a50034;
-            color: #a50034;
+            color: #fff;
+            border-bottom-color: #c00;
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
-        button.refresh {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+
+        .section {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
 
-        button.refresh:hover {
-            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        .section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #222;
+        }
+
+        .setting-row {
+            margin-bottom: 14px;
+        }
+
+        .setting-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-row label {
+            font-size: 12px;
+            color: #888;
         }
 
         .setting-value {
-            display: inline-block;
-            min-width: 50px;
-            text-align: center;
-            font-weight: 700;
-            color: #a50034;
-            font-size: 16px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        select {
+            width: 100%;
+            padding: 7px 10px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #c00;
+        }
+
+        select:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .setting-row.unavailable label {
+            color: #444;
+        }
+
+        .setting-row.unavailable label::after {
+            content: " (unavailable)";
+            font-size: 10px;
+            font-style: italic;
+        }
+
+        input[type="range"] {
+            width: calc(100% - 50px);
+            height: 2px;
+            margin: 8px 0;
+            background: #333;
+            border-radius: 1px;
+            outline: none;
+            -webkit-appearance: none;
+            vertical-align: middle;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #c00;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #c00;
+            cursor: pointer;
+            border: none;
+        }
+
+        input[type="range"]:disabled {
+            opacity: 0.2;
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 24px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .tabs {
-                flex-wrap: wrap;
-            }
-
-            .tab {
-                flex: 1 1 auto;
-                min-width: 100px;
-                padding: 12px 16px;
-                font-size: 13px;
-            }
+            .container { padding: 0 12px; }
+            h1 { font-size: 18px; }
+            .tabs { gap: 12px; overflow-x: auto; }
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <div class="container">
+            <h1>LG TV Control</h1>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>LG TV Picture Control</h1>
+        <div class="panel">
+            <label for="tvIp">TV IP Address</label>
+            <input type="text" id="tvIp" placeholder="192.168.1.100">
 
-        <div class="input-group">
-            <label for="tvIp">TV IP Address:</label>
-            <input type="text" id="tvIp" placeholder="192.168.1.100" value="">
-        </div>
+            <div class="btn-row">
+                <button id="connectBtn" onclick="connect()">Connect</button>
+                <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+                <button class="secondary" onclick="clearClientKey()">Clear Key</button>
+            </div>
 
-        <div>
-            <button id="connectBtn" onclick="connect()">Connect</button>
-            <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
-            <button class="secondary" onclick="clearClientKey()">Clear Saved Key</button>
-        </div>
+            <div id="certHelp" class="cert-help">
+                <strong>First time?</strong> Accept the SSL certificate first.
+                <br><br>
+                <button class="secondary" onclick="openCertPage()">Accept Certificate</button>
+            </div>
 
-        <div id="certHelp" class="cert-help">
-            <strong>First time connecting?</strong>
-            You need to accept the TV's SSL certificate first. Click the button below, then click "Advanced" and "Proceed" in the browser warning.
-            <br><br>
-            <button class="secondary" onclick="openCertPage()">Accept Certificate</button>
-        </div>
-
-        <div id="status" class="status info" style="display: none;">
-            Ready to connect
+            <div id="status" class="status info">Ready</div>
         </div>
 
         <div id="controls" class="controls">
-            <button class="refresh" onclick="refreshAllSettings()">Refresh All Settings</button>
+            <button class="green" onclick="refreshAllSettings()">Refresh Settings</button>
 
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('basic')">Basic</button>
@@ -399,81 +329,74 @@
                 <div class="section">
                     <h3>Picture Mode</h3>
                     <div class="setting-row">
-                        <label for="pictureMode">Mode:</label>
+                        <label>Mode</label>
                         <select id="pictureMode" onchange="setPictureMode(this.value)">
-                            <option value="">-- Select Mode --</option>
-                            <optgroup label="SDR Modes">
+                            <option value="">-- Select --</option>
+                            <optgroup label="SDR">
                                 <option value="cinema">Cinema</option>
-                                <option value="expert1">Expert 1 (Bright Room)</option>
-                                <option value="expert2">Expert 2 (Dark Room)</option>
-                                <option value="filmMaker">Filmmaker Mode</option>
+                                <option value="expert1">Expert 1</option>
+                                <option value="expert2">Expert 2</option>
+                                <option value="filmMaker">Filmmaker</option>
                                 <option value="game">Game</option>
                                 <option value="vivid">Vivid</option>
                                 <option value="normal">Normal</option>
                                 <option value="eco">Eco</option>
                                 <option value="sports">Sports</option>
                                 <option value="photo">Photo</option>
-                                <option value="personalized">Personalized</option>
                             </optgroup>
-                            <optgroup label="HDR10 Modes">
+                            <optgroup label="HDR10">
                                 <option value="hdrCinema">HDR Cinema</option>
                                 <option value="hdrCinemaBright">HDR Cinema Bright</option>
                                 <option value="hdrGame">HDR Game</option>
                                 <option value="hdrFilmMaker">HDR Filmmaker</option>
                                 <option value="hdrVivid">HDR Vivid</option>
                                 <option value="hdrStandard">HDR Standard</option>
-                                <option value="hdrEco">HDR Eco</option>
-                                <option value="hdrExternal">HDR External</option>
-                                <option value="hdrPersonalized">HDR Personalized</option>
                             </optgroup>
-                            <optgroup label="Dolby Vision Modes">
+                            <optgroup label="Dolby Vision">
                                 <option value="dolbyHdrCinema">Dolby Cinema</option>
                                 <option value="dolbyHdrCinemaBright">Dolby Cinema Bright</option>
                                 <option value="dolbyHdrGame">Dolby Game</option>
                                 <option value="dolbyHdrVivid">Dolby Vivid</option>
-                                <option value="dolbyHdrStandard">Dolby Standard</option>
-                                <option value="dolbyHdrDarkAmazon">Dolby Dark (Amazon)</option>
-                                <option value="dolbyHdrPersonalized">Dolby Personalized</option>
                             </optgroup>
                         </select>
                     </div>
                 </div>
 
                 <div class="section">
-                    <h3>Basic Picture Settings</h3>
+                    <h3>Basic Settings</h3>
 
                     <div class="setting-row">
-                        <label for="backlight">Backlight/OLED Light: <span class="setting-value" id="backlightValue">50</span></label>
+                        <label>Backlight: <span class="setting-value" id="backlightValue">50</span></label>
                         <input type="range" id="backlight" min="0" max="100" value="50" oninput="updateSliderDisplay('backlight', this.value)" onchange="setSetting('backlight', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="contrast">Contrast: <span class="setting-value" id="contrastValue">85</span></label>
+                        <label>Contrast: <span class="setting-value" id="contrastValue">85</span></label>
                         <input type="range" id="contrast" min="0" max="100" value="85" oninput="updateSliderDisplay('contrast', this.value)" onchange="setSetting('contrast', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="brightness">Brightness: <span class="setting-value" id="brightnessValue">50</span></label>
+                        <label>Brightness: <span class="setting-value" id="brightnessValue">50</span></label>
                         <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateSliderDisplay('brightness', this.value)" onchange="setSetting('brightness', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="color">Color: <span class="setting-value" id="colorValue">50</span></label>
+                        <label>Color: <span class="setting-value" id="colorValue">50</span></label>
                         <input type="range" id="color" min="0" max="100" value="50" oninput="updateSliderDisplay('color', this.value)" onchange="setSetting('color', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="tint">Tint: <span class="setting-value" id="tintValue">0</span></label>
+                        <label>Tint: <span class="setting-value" id="tintValue">0</span></label>
                         <input type="range" id="tint" min="-50" max="50" value="0" oninput="updateSliderDisplay('tint', this.value)" onchange="setSetting('tint', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="sharpness">Sharpness: <span class="setting-value" id="sharpnessValue">10</span></label>
+                        <label>Sharpness: <span class="setting-value" id="sharpnessValue">10</span></label>
                         <input type="range" id="sharpness" min="0" max="50" value="10" oninput="updateSliderDisplay('sharpness', this.value)" onchange="setSetting('sharpness', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="colorTemperature">Color Temperature: <span class="setting-value" id="colorTemperatureValue">0</span></label>
+                        <label>Color Temp: <span class="setting-value" id="colorTemperatureValue">0</span></label>
                         <input type="range" id="colorTemperature" min="-50" max="50" value="0" oninput="updateSliderDisplay('colorTemperature', this.value)" onchange="setSetting('colorTemperature', parseInt(this.value))">
                     </div>
                 </div>
@@ -482,10 +405,10 @@
             <!-- Advanced Tab -->
             <div id="tab-advanced" class="tab-content">
                 <div class="section">
-                    <h3>Advanced Picture Settings</h3>
+                    <h3>Advanced</h3>
 
                     <div class="setting-row">
-                        <label for="blackLevel">Black Level:</label>
+                        <label>Black Level</label>
                         <select id="blackLevel" onchange="setSetting('blackLevel', this.value)">
                             <option value="auto">Auto</option>
                             <option value="low">Low</option>
@@ -494,30 +417,26 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="gamma">Gamma:</label>
+                        <label>Gamma</label>
                         <select id="gamma" onchange="setSetting('gamma', this.value)">
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
-                            <option value="mediumHavingLevel">Medium (Level) - G5</option>
                             <option value="high1">High 1</option>
                             <option value="high2">High 2</option>
                         </select>
                     </div>
 
                     <div class="setting-row">
-                        <label for="colorGamut">Color Gamut:</label>
+                        <label>Color Gamut</label>
                         <select id="colorGamut" onchange="setSetting('colorGamut', this.value)">
                             <option value="auto">Auto</option>
                             <option value="native">Native</option>
                             <option value="wide">Wide</option>
-                            <option value="extended">Extended</option>
-                            <option value="dynamic">Dynamic</option>
-                            <option value="srgb">sRGB</option>
                         </select>
                     </div>
 
                     <div class="setting-row">
-                        <label for="dynamicContrast">Dynamic Contrast:</label>
+                        <label>Dynamic Contrast</label>
                         <select id="dynamicContrast" onchange="setSetting('dynamicContrast', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -527,7 +446,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="peakBrightness">Peak Brightness:</label>
+                        <label>Peak Brightness</label>
                         <select id="peakBrightness" onchange="setSetting('peakBrightness', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -537,18 +456,17 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="dynamicColor">Dynamic Color:</label>
+                        <label>Dynamic Color</label>
                         <select id="dynamicColor" onchange="setSetting('dynamicColor', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
                             <option value="high">High</option>
-                            <option value="user">User</option>
                         </select>
                     </div>
 
                     <div class="setting-row">
-                        <label for="superResolution">Super Resolution:</label>
+                        <label>Super Resolution</label>
                         <select id="superResolution" onchange="setSetting('superResolution', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -558,7 +476,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="noiseReduction">Noise Reduction:</label>
+                        <label>Noise Reduction</label>
                         <select id="noiseReduction" onchange="setSetting('noiseReduction', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -569,7 +487,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="mpegNoiseReduction">MPEG Noise Reduction:</label>
+                        <label>MPEG Noise Reduction</label>
                         <select id="mpegNoiseReduction" onchange="setSetting('mpegNoiseReduction', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -580,7 +498,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="smoothGradation">Smooth Gradation:</label>
+                        <label>Smooth Gradation</label>
                         <select id="smoothGradation" onchange="setSetting('smoothGradation', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -590,7 +508,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="realCinema">Real Cinema:</label>
+                        <label>Real Cinema</label>
                         <select id="realCinema" onchange="setSetting('realCinema', this.value)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
@@ -598,7 +516,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="eyeComfortMode">Eye Comfort Mode:</label>
+                        <label>Eye Comfort</label>
                         <select id="eyeComfortMode" onchange="setSetting('eyeComfortMode', this.value)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
@@ -607,10 +525,10 @@
                 </div>
 
                 <div class="section">
-                    <h3>HDR Settings</h3>
+                    <h3>HDR</h3>
 
                     <div class="setting-row">
-                        <label for="hdrDynamicToneMapping">HDR Dynamic Tone Mapping:</label>
+                        <label>HDR Tone Mapping</label>
                         <select id="hdrDynamicToneMapping" onchange="setSetting('hdrDynamicToneMapping', this.value)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
@@ -619,7 +537,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="hgig">HGIG (G5 2024+):</label>
+                        <label>HGIG</label>
                         <select id="hgig" onchange="setSetting('hgig', this.value)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
@@ -627,7 +545,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="dolbyPrecisionDetail">Dolby Precision Detail:</label>
+                        <label>Dolby Precision</label>
                         <select id="dolbyPrecisionDetail" onchange="setSetting('dolbyPrecisionDetail', this.value)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
@@ -636,24 +554,24 @@
                 </div>
 
                 <div class="section">
-                    <h3>Gaming Settings</h3>
+                    <h3>Gaming</h3>
 
                     <div class="setting-row">
-                        <label for="blackStabilizer">Black Stabilizer: <span class="setting-value" id="blackStabilizerValue">0</span></label>
+                        <label>Black Stabilizer: <span class="setting-value" id="blackStabilizerValue">0</span></label>
                         <input type="range" id="blackStabilizer" min="0" max="20" value="0" oninput="updateSliderDisplay('blackStabilizer', this.value)" onchange="setSetting('blackStabilizer', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteStabilizer">White Stabilizer: <span class="setting-value" id="whiteStabilizerValue">0</span></label>
+                        <label>White Stabilizer: <span class="setting-value" id="whiteStabilizerValue">0</span></label>
                         <input type="range" id="whiteStabilizer" min="0" max="20" value="0" oninput="updateSliderDisplay('whiteStabilizer', this.value)" onchange="setSetting('whiteStabilizer', parseInt(this.value))">
                     </div>
                 </div>
 
                 <div class="section">
-                    <h3>White Balance (2-Point)</h3>
+                    <h3>White Balance</h3>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceColorTemperature">Color Temperature:</label>
+                        <label>Color Temp</label>
                         <select id="whiteBalanceColorTemperature" onchange="setSetting('whiteBalanceColorTemperature', this.value)">
                             <option value="cool">Cool</option>
                             <option value="medium">Medium</option>
@@ -664,40 +582,40 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalancePoint">White Balance Point:</label>
+                        <label>Point</label>
                         <select id="whiteBalancePoint" onchange="setSetting('whiteBalancePoint', this.value)">
-                            <option value="low">Low (2-Point)</option>
-                            <option value="high">High (2-Point)</option>
+                            <option value="low">Low</option>
+                            <option value="high">High</option>
                         </select>
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceRedOffset">Red Offset: <span class="setting-value" id="whiteBalanceRedOffsetValue">0</span></label>
+                        <label>Red Offset: <span class="setting-value" id="whiteBalanceRedOffsetValue">0</span></label>
                         <input type="range" id="whiteBalanceRedOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedOffset', this.value)" onchange="setSetting('whiteBalanceRedOffset', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceGreenOffset">Green Offset: <span class="setting-value" id="whiteBalanceGreenOffsetValue">0</span></label>
+                        <label>Green Offset: <span class="setting-value" id="whiteBalanceGreenOffsetValue">0</span></label>
                         <input type="range" id="whiteBalanceGreenOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenOffset', this.value)" onchange="setSetting('whiteBalanceGreenOffset', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceBlueOffset">Blue Offset: <span class="setting-value" id="whiteBalanceBlueOffsetValue">0</span></label>
+                        <label>Blue Offset: <span class="setting-value" id="whiteBalanceBlueOffsetValue">0</span></label>
                         <input type="range" id="whiteBalanceBlueOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueOffset', this.value)" onchange="setSetting('whiteBalanceBlueOffset', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceRedGain">Red Gain: <span class="setting-value" id="whiteBalanceRedGainValue">0</span></label>
+                        <label>Red Gain: <span class="setting-value" id="whiteBalanceRedGainValue">0</span></label>
                         <input type="range" id="whiteBalanceRedGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedGain', this.value)" onchange="setSetting('whiteBalanceRedGain', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceGreenGain">Green Gain: <span class="setting-value" id="whiteBalanceGreenGainValue">0</span></label>
+                        <label>Green Gain: <span class="setting-value" id="whiteBalanceGreenGainValue">0</span></label>
                         <input type="range" id="whiteBalanceGreenGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenGain', this.value)" onchange="setSetting('whiteBalanceGreenGain', parseInt(this.value))">
                     </div>
 
                     <div class="setting-row">
-                        <label for="whiteBalanceBlueGain">Blue Gain: <span class="setting-value" id="whiteBalanceBlueGainValue">0</span></label>
+                        <label>Blue Gain: <span class="setting-value" id="whiteBalanceBlueGainValue">0</span></label>
                         <input type="range" id="whiteBalanceBlueGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueGain', this.value)" onchange="setSetting('whiteBalanceBlueGain', parseInt(this.value))">
                     </div>
                 </div>
@@ -706,10 +624,10 @@
             <!-- Motion Tab -->
             <div id="tab-motion" class="tab-content">
                 <div class="section">
-                    <h3>Motion Settings</h3>
+                    <h3>Motion</h3>
 
                     <div class="setting-row">
-                        <label for="truMotionMode">TruMotion Mode:</label>
+                        <label>TruMotion</label>
                         <select id="truMotionMode" onchange="setSetting('truMotionMode', this.value, true)">
                             <option value="off">Off</option>
                             <option value="natural">Natural</option>
@@ -721,17 +639,17 @@
                     </div>
 
                     <div class="setting-row" id="truMotionBlurRow" style="display: none;">
-                        <label for="truMotionBlur">TruMotion Blur: <span class="setting-value" id="truMotionBlurValue">0</span></label>
+                        <label>Blur: <span class="setting-value" id="truMotionBlurValue">0</span></label>
                         <input type="range" id="truMotionBlur" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionBlur', this.value)" onchange="setSetting('truMotionBlur', parseInt(this.value), true)">
                     </div>
 
                     <div class="setting-row" id="truMotionJudderRow" style="display: none;">
-                        <label for="truMotionJudder">TruMotion Judder: <span class="setting-value" id="truMotionJudderValue">0</span></label>
+                        <label>Judder: <span class="setting-value" id="truMotionJudderValue">0</span></label>
                         <input type="range" id="truMotionJudder" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionJudder', this.value)" onchange="setSetting('truMotionJudder', parseInt(this.value), true)">
                     </div>
 
                     <div class="setting-row">
-                        <label for="motionEyeCare">Motion Eye Care:</label>
+                        <label>Motion Eye Care</label>
                         <select id="motionEyeCare" onchange="setSetting('motionEyeCare', this.value)">
                             <option value="on">On</option>
                             <option value="off">Off</option>
@@ -739,7 +657,7 @@
                     </div>
 
                     <div class="setting-row">
-                        <label for="motionProOLED">Motion Pro (OLED):</label>
+                        <label>Motion Pro</label>
                         <select id="motionProOLED" onchange="setSetting('motionProOLED', this.value)">
                             <option value="off">Off</option>
                             <option value="low">Low</option>
@@ -754,42 +672,39 @@
             <!-- AI/Other Tab -->
             <div id="tab-ai" class="tab-content">
                 <div class="section">
-                    <h3>AI Picture Settings</h3>
-                    <p style="background-color: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
-                        <strong>Note:</strong> AI settings can only be SET, not read. Current values cannot be displayed.
-                        Click a button below to set the value.
-                    </p>
+                    <h3>AI Picture</h3>
+                    <p style="font-size: 11px; color: #666; margin-bottom: 12px;">Note: AI settings can only be set, not read.</p>
 
                     <div class="setting-row">
-                        <label>AI Picture:</label>
-                        <div>
-                            <button onclick="setAISetting('ai_Picture', 'on')" style="margin-right: 10px; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Set ON</button>
-                            <button onclick="setAISetting('ai_Picture', 'off')" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Set OFF</button>
+                        <label>AI Picture</label>
+                        <div class="btn-row">
+                            <button class="green" onclick="setAISetting('ai_Picture', 'on')">ON</button>
+                            <button style="background:#c00" onclick="setAISetting('ai_Picture', 'off')">OFF</button>
                         </div>
                     </div>
 
                     <div class="setting-row">
-                        <label>AI Brightness:</label>
-                        <div>
-                            <button onclick="setAISetting('ai_Brightness', 'on')" style="margin-right: 10px; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Set ON</button>
-                            <button onclick="setAISetting('ai_Brightness', 'off')" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Set OFF</button>
+                        <label>AI Brightness</label>
+                        <div class="btn-row">
+                            <button class="green" onclick="setAISetting('ai_Brightness', 'on')">ON</button>
+                            <button style="background:#c00" onclick="setAISetting('ai_Brightness', 'off')">OFF</button>
                         </div>
                     </div>
 
                     <div class="setting-row">
-                        <label>AI Genre:</label>
-                        <div>
-                            <button onclick="setAISetting('ai_Genre', 'on')" style="margin-right: 10px; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Set ON</button>
-                            <button onclick="setAISetting('ai_Genre', 'off')" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Set OFF</button>
+                        <label>AI Genre</label>
+                        <div class="btn-row">
+                            <button class="green" onclick="setAISetting('ai_Genre', 'on')">ON</button>
+                            <button style="background:#c00" onclick="setAISetting('ai_Genre', 'off')">OFF</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="section">
-                    <h3>Energy & Other</h3>
+                    <h3>Other</h3>
 
                     <div class="setting-row">
-                        <label for="energySaving">Energy Saving:</label>
+                        <label>Energy Saving</label>
                         <select id="energySaving" onchange="setSetting('energySaving', this.value)">
                             <option value="off">Off</option>
                             <option value="min">Minimum</option>
@@ -812,6 +727,11 @@
         let useSecure = true;  // New TVs require wss:// on port 3001
         let pendingRefreshRequests = 0;
         let requestedSettings = {};  // Track which settings we requested per message ID
+
+        // Proxy mode: Set to true if using websocket-proxy.js server
+        // When true, connects to ws://localhost:PROXY_PORT instead of directly to TV
+        const USE_PROXY = false;
+        const PROXY_URL = 'ws://localhost:8765';
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -904,6 +824,11 @@
         }
 
         function openCertPage() {
+            if (USE_PROXY) {
+                showStatus('Certificate not needed when using proxy mode', 'info');
+                return;
+            }
+
             const ip = document.getElementById('tvIp').value.trim();
             if (!ip) {
                 showStatus('Please enter a TV IP address first', 'error');
@@ -935,16 +860,32 @@
             }
 
             showCertHelp(false);  // Hide cert help when attempting connection
-            showStatus('Connecting to TV...', 'info');
 
-            const wsUrl = `wss://${ip}:3001`;
-            console.log('Connecting to:', wsUrl);
+            let wsUrl;
+            if (USE_PROXY) {
+                wsUrl = PROXY_URL;
+                showStatus('Connecting via proxy server...', 'info');
+                console.log('Connecting via proxy:', wsUrl, '-> TV:', ip);
+            } else {
+                wsUrl = `wss://${ip}:3001`;
+                showStatus('Connecting to TV...', 'info');
+                console.log('Connecting directly to TV:', wsUrl);
+            }
 
             ws = new WebSocket(wsUrl);
 
             ws.onopen = () => {
                 console.log('WebSocket connected');
                 showStatus('WebSocket connected, registering...', 'info');
+
+                // If using proxy, send TV IP first
+                if (USE_PROXY) {
+                    ws.send(JSON.stringify({
+                        type: '__PROXY_SET_TV_IP__',
+                        ip: ip
+                    }));
+                    console.log('Sent TV IP to proxy:', ip);
+                }
 
                 // Send registration message
                 const registrationMsg = {
