@@ -11,711 +11,972 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #a50034;
+            --bg: #ffffff;
+            --surface: #f8f9fa;
+            --border: #e1e4e8;
+            --text: #24292e;
+            --text-secondary: #6a737d;
+            --success: #28a745;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.08);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #000;
-            color: #fff;
-            line-height: 1.5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
         }
 
+        /* Header */
         .header {
-            background: #111;
-            border-bottom: 1px solid #222;
-            padding: 16px 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
         }
 
-        .container {
-            max-width: 1200px;
+        .header-inner {
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        h1 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .panel {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 6px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        label {
-            display: block;
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            max-width: 300px;
-            padding: 8px 12px;
-            background: #000;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #fff;
-            font-size: 14px;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #c00;
-        }
-
-        .btn-row {
+            padding: 16px 20px;
             display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        button {
-            padding: 8px 16px;
-            background: #c00;
-            color: #fff;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .hamburger {
+            display: none;
+            width: 40px;
+            height: 40px;
             border: none;
-            border-radius: 4px;
-            font-size: 13px;
+            background: none;
             cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        /* Sidebar Navigation */
+        .layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 32px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .nav {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: 500;
+            color: var(--text-secondary);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s;
         }
 
-        button:hover:not(:disabled) {
-            background: #a00;
+        .nav-item:hover {
+            background: rgba(0,0,0,0.04);
+            color: var(--text);
         }
 
-        button:disabled {
-            background: #222;
-            color: #555;
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        /* Connection Card */
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(165, 0, 52, 0.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #8a002b;
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e9ecef;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
-        button.secondary {
-            background: #222;
-            color: #aaa;
-        }
-
-        button.secondary:hover:not(:disabled) {
-            background: #2a2a2a;
-        }
-
-        button.green {
-            background: #0a0;
-        }
-
-        button.green:hover:not(:disabled) {
-            background: #080;
-        }
-
-        .status {
-            margin-top: 12px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            display: none;
-        }
-
-        .status.info { background: #003; color: #99f; }
-        .status.success { background: #030; color: #9f9; }
-        .status.error { background: #300; color: #f99; }
-        .status.warning { background: #330; color: #ff9; }
-
-        .cert-help {
-            display: none;
-            margin-top: 12px;
-            padding: 10px;
-            background: #221100;
-            border-left: 2px solid #f90;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #ccc;
-        }
-
-        .cert-help.show { display: block; }
-
-        .controls {
-            display: none;
-        }
-
-        .controls.active {
-            display: block;
-        }
-
-        .tabs {
+        .btn-group {
             display: flex;
-            gap: 20px;
-            border-bottom: 1px solid #222;
-            margin: 20px 0;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .tab {
-            padding: 10px 0;
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 14px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            font-weight: 500;
+        /* Status Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 16px;
+            display: none;
+            border-left: 3px solid;
         }
 
-        .tab:hover:not(.active) {
-            color: #999;
+        .alert.info {
+            background: #e7f3ff;
+            color: #0969da;
+            border-color: #0969da;
         }
 
-        .tab.active {
-            color: #fff;
-            border-bottom-color: #c00;
+        .alert.success {
+            background: #dafbe1;
+            color: #1a7f37;
+            border-color: #1a7f37;
         }
 
-        .tab-content {
+        .alert.error {
+            background: #ffebe9;
+            color: #cf222e;
+            border-color: #cf222e;
+        }
+
+        .alert.warning {
+            background: #fff8c5;
+            color: #9a6700;
+            border-color: #9a6700;
+        }
+
+        /* Content Sections */
+        .content {
             display: none;
         }
 
-        .tab-content.active {
+        .content.active {
             display: block;
         }
 
         .section {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 32px;
         }
 
-        .section h3 {
-            font-size: 14px;
+        .section-title {
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 14px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #222;
+            margin-bottom: 16px;
+            color: var(--text);
         }
 
-        .setting-row {
-            margin-bottom: 14px;
+        .settings-grid {
+            display: grid;
+            gap: 20px;
         }
 
-        .setting-row:last-child {
-            margin-bottom: 0;
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .setting-row label {
-            font-size: 12px;
-            color: #888;
+        .setting-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .setting-value {
-            color: #fff;
             font-weight: 600;
+            color: var(--primary);
         }
 
-        select {
+        .select {
             width: 100%;
-            padding: 7px 10px;
-            background: #000;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #fff;
-            font-size: 13px;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg);
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        select:focus {
+        .select:focus {
             outline: none;
-            border-color: #c00;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(165, 0, 52, 0.1);
         }
 
-        select:disabled {
-            opacity: 0.3;
+        .select:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
-        .setting-row.unavailable label {
-            color: #444;
+        .slider {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            outline: none;
+            -webkit-appearance: none;
         }
 
-        .setting-row.unavailable label::after {
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+
+        .slider:disabled {
+            opacity: 0.3;
+        }
+
+        .setting-item.unavailable .setting-label {
+            color: #959da5;
+        }
+
+        .setting-item.unavailable .setting-label::after {
             content: " (unavailable)";
-            font-size: 10px;
+            font-size: 11px;
             font-style: italic;
         }
 
-        input[type="range"] {
-            width: calc(100% - 50px);
-            height: 2px;
-            margin: 8px 0;
-            background: #333;
-            border-radius: 1px;
-            outline: none;
-            -webkit-appearance: none;
-            vertical-align: middle;
+        .toggle-buttons {
+            display: flex;
+            gap: 8px;
         }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #c00;
-            cursor: pointer;
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 13px;
         }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #c00;
-            cursor: pointer;
-            border: none;
+        .btn-success {
+            background: var(--success);
+            color: white;
         }
 
-        input[type="range"]:disabled {
-            opacity: 0.2;
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
         }
 
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 12px;
+            background: var(--surface);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 99;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .container { padding: 0 12px; }
-            h1 { font-size: 18px; }
-            .tabs { gap: 12px; overflow-x: auto; }
+            .hamburger {
+                display: flex;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header-inner {
+                padding: 12px 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="container">
-            <h1>LG TV Control</h1>
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">📺</div>
+                <span>LG TV Control</span>
+            </div>
+            <button class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="nav">
+            <button class="nav-item active" onclick="showSection('connection')">
+                <span class="nav-icon">🔌</span> Connection
+            </button>
+            <button class="nav-item" onclick="showSection('basic')">
+                <span class="nav-icon">⚙️</span> Basic
+            </button>
+            <button class="nav-item" onclick="showSection('advanced')">
+                <span class="nav-icon">🎛️</span> Advanced
+            </button>
+            <button class="nav-item" onclick="showSection('motion')">
+                <span class="nav-icon">🎬</span> Motion
+            </button>
+            <button class="nav-item" onclick="showSection('ai')">
+                <span class="nav-icon">🤖</span> AI/Other
+            </button>
         </div>
     </div>
 
     <div class="container">
-        <div class="panel">
-            <label for="tvIp">TV IP Address</label>
-            <input type="text" id="tvIp" placeholder="192.168.1.100">
+        <div class="layout">
+            <aside class="sidebar">
+                <nav class="nav">
+                    <button class="nav-item active" onclick="showSection('connection')">
+                        <span class="nav-icon">🔌</span> Connection
+                    </button>
+                    <button class="nav-item" onclick="showSection('basic')">
+                        <span class="nav-icon">⚙️</span> Basic
+                    </button>
+                    <button class="nav-item" onclick="showSection('advanced')">
+                        <span class="nav-icon">🎛️</span> Advanced
+                    </button>
+                    <button class="nav-item" onclick="showSection('motion')">
+                        <span class="nav-icon">🎬</span> Motion
+                    </button>
+                    <button class="nav-item" onclick="showSection('ai')">
+                        <span class="nav-icon">🤖</span> AI/Other
+                    </button>
+                </nav>
+            </aside>
 
-            <div class="btn-row">
-                <button id="connectBtn" onclick="connect()">Connect</button>
-                <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
-                <button class="secondary" onclick="clearClientKey()">Clear Key</button>
-            </div>
+            <main>
+                <!-- Connection Section -->
+                <div id="section-connection" class="content active">
+                    <div class="card">
+                        <h2 class="card-title">Connect to TV</h2>
 
-            <div id="certHelp" class="cert-help">
-                <strong>First time?</strong> Accept the SSL certificate first.
-                <br><br>
-                <button class="secondary" onclick="openCertPage()">Accept Certificate</button>
-            </div>
+                        <div class="form-group">
+                            <label class="form-label">TV IP Address</label>
+                            <input type="text" id="tvIp" class="form-input" placeholder="192.168.1.100">
+                        </div>
 
-            <div id="status" class="status info">Ready</div>
-        </div>
+                        <div class="btn-group">
+                            <button id="connectBtn" class="btn btn-primary" onclick="connect()">Connect</button>
+                            <button id="disconnectBtn" class="btn btn-secondary" onclick="disconnect()" disabled>Disconnect</button>
+                            <button class="btn btn-secondary" onclick="clearClientKey()">Clear Key</button>
+                        </div>
 
-        <div id="controls" class="controls">
-            <button class="green" onclick="refreshAllSettings()">Refresh Settings</button>
+                        <div id="certHelp" class="alert warning" style="display:none">
+                            <strong>First time?</strong> Accept the SSL certificate first.
+                            <br><br>
+                            <button class="btn btn-secondary btn-sm" onclick="openCertPage()">Accept Certificate</button>
+                        </div>
 
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('basic')">Basic</button>
-                <button class="tab" onclick="switchTab('advanced')">Advanced</button>
-                <button class="tab" onclick="switchTab('motion')">Motion</button>
-                <button class="tab" onclick="switchTab('ai')">AI/Other</button>
-            </div>
+                        <div id="status" class="alert info">Ready to connect</div>
+                    </div>
 
-            <!-- Basic Tab -->
-            <div id="tab-basic" class="tab-content active">
-                <div class="section">
-                    <h3>Picture Mode</h3>
-                    <div class="setting-row">
-                        <label>Mode</label>
-                        <select id="pictureMode" onchange="setPictureMode(this.value)">
-                            <option value="">-- Select --</option>
-                            <optgroup label="SDR">
-                                <option value="cinema">Cinema</option>
-                                <option value="expert1">Expert 1</option>
-                                <option value="expert2">Expert 2</option>
-                                <option value="filmMaker">Filmmaker</option>
-                                <option value="game">Game</option>
-                                <option value="vivid">Vivid</option>
-                                <option value="normal">Normal</option>
-                                <option value="eco">Eco</option>
-                                <option value="sports">Sports</option>
-                                <option value="photo">Photo</option>
-                            </optgroup>
-                            <optgroup label="HDR10">
-                                <option value="hdrCinema">HDR Cinema</option>
-                                <option value="hdrCinemaBright">HDR Cinema Bright</option>
-                                <option value="hdrGame">HDR Game</option>
-                                <option value="hdrFilmMaker">HDR Filmmaker</option>
-                                <option value="hdrVivid">HDR Vivid</option>
-                                <option value="hdrStandard">HDR Standard</option>
-                            </optgroup>
-                            <optgroup label="Dolby Vision">
-                                <option value="dolbyHdrCinema">Dolby Cinema</option>
-                                <option value="dolbyHdrCinemaBright">Dolby Cinema Bright</option>
-                                <option value="dolbyHdrGame">Dolby Game</option>
-                                <option value="dolbyHdrVivid">Dolby Vivid</option>
-                            </optgroup>
-                        </select>
+                    <div id="controls" style="display:none">
+                        <button class="btn btn-success" onclick="refreshAllSettings()">🔄 Refresh All Settings</button>
                     </div>
                 </div>
 
-                <div class="section">
-                    <h3>Basic Settings</h3>
-
-                    <div class="setting-row">
-                        <label>Backlight: <span class="setting-value" id="backlightValue">50</span></label>
-                        <input type="range" id="backlight" min="0" max="100" value="50" oninput="updateSliderDisplay('backlight', this.value)" onchange="setSetting('backlight', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Contrast: <span class="setting-value" id="contrastValue">85</span></label>
-                        <input type="range" id="contrast" min="0" max="100" value="85" oninput="updateSliderDisplay('contrast', this.value)" onchange="setSetting('contrast', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Brightness: <span class="setting-value" id="brightnessValue">50</span></label>
-                        <input type="range" id="brightness" min="0" max="100" value="50" oninput="updateSliderDisplay('brightness', this.value)" onchange="setSetting('brightness', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Color: <span class="setting-value" id="colorValue">50</span></label>
-                        <input type="range" id="color" min="0" max="100" value="50" oninput="updateSliderDisplay('color', this.value)" onchange="setSetting('color', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Tint: <span class="setting-value" id="tintValue">0</span></label>
-                        <input type="range" id="tint" min="-50" max="50" value="0" oninput="updateSliderDisplay('tint', this.value)" onchange="setSetting('tint', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Sharpness: <span class="setting-value" id="sharpnessValue">10</span></label>
-                        <input type="range" id="sharpness" min="0" max="50" value="10" oninput="updateSliderDisplay('sharpness', this.value)" onchange="setSetting('sharpness', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Color Temp: <span class="setting-value" id="colorTemperatureValue">0</span></label>
-                        <input type="range" id="colorTemperature" min="-50" max="50" value="0" oninput="updateSliderDisplay('colorTemperature', this.value)" onchange="setSetting('colorTemperature', parseInt(this.value))">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Advanced Tab -->
-            <div id="tab-advanced" class="tab-content">
-                <div class="section">
-                    <h3>Advanced</h3>
-
-                    <div class="setting-row">
-                        <label>Black Level</label>
-                        <select id="blackLevel" onchange="setSetting('blackLevel', this.value)">
-                            <option value="auto">Auto</option>
-                            <option value="low">Low</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Gamma</label>
-                        <select id="gamma" onchange="setSetting('gamma', this.value)">
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high1">High 1</option>
-                            <option value="high2">High 2</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Color Gamut</label>
-                        <select id="colorGamut" onchange="setSetting('colorGamut', this.value)">
-                            <option value="auto">Auto</option>
-                            <option value="native">Native</option>
-                            <option value="wide">Wide</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Dynamic Contrast</label>
-                        <select id="dynamicContrast" onchange="setSetting('dynamicContrast', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Peak Brightness</label>
-                        <select id="peakBrightness" onchange="setSetting('peakBrightness', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Dynamic Color</label>
-                        <select id="dynamicColor" onchange="setSetting('dynamicColor', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Super Resolution</label>
-                        <select id="superResolution" onchange="setSetting('superResolution', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Noise Reduction</label>
-                        <select id="noiseReduction" onchange="setSetting('noiseReduction', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                            <option value="auto">Auto</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>MPEG Noise Reduction</label>
-                        <select id="mpegNoiseReduction" onchange="setSetting('mpegNoiseReduction', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                            <option value="auto">Auto</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Smooth Gradation</label>
-                        <select id="smoothGradation" onchange="setSetting('smoothGradation', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Real Cinema</label>
-                        <select id="realCinema" onchange="setSetting('realCinema', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Eye Comfort</label>
-                        <select id="eyeComfortMode" onchange="setSetting('eyeComfortMode', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>HDR</h3>
-
-                    <div class="setting-row">
-                        <label>HDR Tone Mapping</label>
-                        <select id="hdrDynamicToneMapping" onchange="setSetting('hdrDynamicToneMapping', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                            <option value="HGIG">HGIG</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>HGIG</label>
-                        <select id="hgig" onchange="setSetting('hgig', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Dolby Precision</label>
-                        <select id="dolbyPrecisionDetail" onchange="setSetting('dolbyPrecisionDetail', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>Gaming</h3>
-
-                    <div class="setting-row">
-                        <label>Black Stabilizer: <span class="setting-value" id="blackStabilizerValue">0</span></label>
-                        <input type="range" id="blackStabilizer" min="0" max="20" value="0" oninput="updateSliderDisplay('blackStabilizer', this.value)" onchange="setSetting('blackStabilizer', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>White Stabilizer: <span class="setting-value" id="whiteStabilizerValue">0</span></label>
-                        <input type="range" id="whiteStabilizer" min="0" max="20" value="0" oninput="updateSliderDisplay('whiteStabilizer', this.value)" onchange="setSetting('whiteStabilizer', parseInt(this.value))">
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>White Balance</h3>
-
-                    <div class="setting-row">
-                        <label>Color Temp</label>
-                        <select id="whiteBalanceColorTemperature" onchange="setSetting('whiteBalanceColorTemperature', this.value)">
-                            <option value="cool">Cool</option>
-                            <option value="medium">Medium</option>
-                            <option value="warm1">Warm 1</option>
-                            <option value="warm2">Warm 2</option>
-                            <option value="warm3">Warm 3</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Point</label>
-                        <select id="whiteBalancePoint" onchange="setSetting('whiteBalancePoint', this.value)">
-                            <option value="low">Low</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Red Offset: <span class="setting-value" id="whiteBalanceRedOffsetValue">0</span></label>
-                        <input type="range" id="whiteBalanceRedOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedOffset', this.value)" onchange="setSetting('whiteBalanceRedOffset', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Green Offset: <span class="setting-value" id="whiteBalanceGreenOffsetValue">0</span></label>
-                        <input type="range" id="whiteBalanceGreenOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenOffset', this.value)" onchange="setSetting('whiteBalanceGreenOffset', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Blue Offset: <span class="setting-value" id="whiteBalanceBlueOffsetValue">0</span></label>
-                        <input type="range" id="whiteBalanceBlueOffset" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueOffset', this.value)" onchange="setSetting('whiteBalanceBlueOffset', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Red Gain: <span class="setting-value" id="whiteBalanceRedGainValue">0</span></label>
-                        <input type="range" id="whiteBalanceRedGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedGain', this.value)" onchange="setSetting('whiteBalanceRedGain', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Green Gain: <span class="setting-value" id="whiteBalanceGreenGainValue">0</span></label>
-                        <input type="range" id="whiteBalanceGreenGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenGain', this.value)" onchange="setSetting('whiteBalanceGreenGain', parseInt(this.value))">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Blue Gain: <span class="setting-value" id="whiteBalanceBlueGainValue">0</span></label>
-                        <input type="range" id="whiteBalanceBlueGain" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueGain', this.value)" onchange="setSetting('whiteBalanceBlueGain', parseInt(this.value))">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Motion Tab -->
-            <div id="tab-motion" class="tab-content">
-                <div class="section">
-                    <h3>Motion</h3>
-
-                    <div class="setting-row">
-                        <label>TruMotion</label>
-                        <select id="truMotionMode" onchange="setSetting('truMotionMode', this.value, true)">
-                            <option value="off">Off</option>
-                            <option value="natural">Natural</option>
-                            <option value="smooth">Smooth</option>
-                            <option value="clear">Clear</option>
-                            <option value="cinemaClear">Cinema Clear</option>
-                            <option value="user">User</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row" id="truMotionBlurRow" style="display: none;">
-                        <label>Blur: <span class="setting-value" id="truMotionBlurValue">0</span></label>
-                        <input type="range" id="truMotionBlur" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionBlur', this.value)" onchange="setSetting('truMotionBlur', parseInt(this.value), true)">
-                    </div>
-
-                    <div class="setting-row" id="truMotionJudderRow" style="display: none;">
-                        <label>Judder: <span class="setting-value" id="truMotionJudderValue">0</span></label>
-                        <input type="range" id="truMotionJudder" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionJudder', this.value)" onchange="setSetting('truMotionJudder', parseInt(this.value), true)">
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Motion Eye Care</label>
-                        <select id="motionEyeCare" onchange="setSetting('motionEyeCare', this.value)">
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Motion Pro</label>
-                        <select id="motionProOLED" onchange="setSetting('motionProOLED', this.value)">
-                            <option value="off">Off</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                            <option value="auto">Auto</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI/Other Tab -->
-            <div id="tab-ai" class="tab-content">
-                <div class="section">
-                    <h3>AI Picture</h3>
-                    <p style="font-size: 11px; color: #666; margin-bottom: 12px;">Note: AI settings can only be set, not read.</p>
-
-                    <div class="setting-row">
-                        <label>AI Picture</label>
-                        <div class="btn-row">
-                            <button class="green" onclick="setAISetting('ai_Picture', 'on')">ON</button>
-                            <button style="background:#c00" onclick="setAISetting('ai_Picture', 'off')">OFF</button>
+                <!-- Basic Section -->
+                <div id="section-basic" class="content">
+                    <div class="section">
+                        <h2 class="section-title">Picture Mode</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">Mode</label>
+                                    <select id="pictureMode" class="select" onchange="setPictureMode(this.value)">
+                                        <option value="">Select mode</option>
+                                        <optgroup label="SDR">
+                                            <option value="cinema">Cinema</option>
+                                            <option value="expert1">Expert 1</option>
+                                            <option value="expert2">Expert 2</option>
+                                            <option value="filmMaker">Filmmaker</option>
+                                            <option value="game">Game</option>
+                                            <option value="vivid">Vivid</option>
+                                            <option value="normal">Normal</option>
+                                            <option value="eco">Eco</option>
+                                            <option value="sports">Sports</option>
+                                            <option value="photo">Photo</option>
+                                        </optgroup>
+                                        <optgroup label="HDR10">
+                                            <option value="hdrCinema">HDR Cinema</option>
+                                            <option value="hdrCinemaBright">HDR Cinema Bright</option>
+                                            <option value="hdrGame">HDR Game</option>
+                                            <option value="hdrFilmMaker">HDR Filmmaker</option>
+                                            <option value="hdrVivid">HDR Vivid</option>
+                                            <option value="hdrStandard">HDR Standard</option>
+                                        </optgroup>
+                                        <optgroup label="Dolby Vision">
+                                            <option value="dolbyHdrCinema">Dolby Cinema</option>
+                                            <option value="dolbyHdrCinemaBright">Dolby Cinema Bright</option>
+                                            <option value="dolbyHdrGame">Dolby Game</option>
+                                            <option value="dolbyHdrVivid">Dolby Vivid</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="setting-row">
-                        <label>AI Brightness</label>
-                        <div class="btn-row">
-                            <button class="green" onclick="setAISetting('ai_Brightness', 'on')">ON</button>
-                            <button style="background:#c00" onclick="setAISetting('ai_Brightness', 'off')">OFF</button>
-                        </div>
-                    </div>
+                    <div class="section">
+                        <h2 class="section-title">Picture Settings</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">Backlight <span class="setting-value" id="backlightValue">50</span></label>
+                                    <input type="range" id="backlight" class="slider" min="0" max="100" value="50" oninput="updateSliderDisplay('backlight', this.value)" onchange="setSetting('backlight', parseInt(this.value))">
+                                </div>
 
-                    <div class="setting-row">
-                        <label>AI Genre</label>
-                        <div class="btn-row">
-                            <button class="green" onclick="setAISetting('ai_Genre', 'on')">ON</button>
-                            <button style="background:#c00" onclick="setAISetting('ai_Genre', 'off')">OFF</button>
+                                <div class="setting-item">
+                                    <label class="setting-label">Contrast <span class="setting-value" id="contrastValue">85</span></label>
+                                    <input type="range" id="contrast" class="slider" min="0" max="100" value="85" oninput="updateSliderDisplay('contrast', this.value)" onchange="setSetting('contrast', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Brightness <span class="setting-value" id="brightnessValue">50</span></label>
+                                    <input type="range" id="brightness" class="slider" min="0" max="100" value="50" oninput="updateSliderDisplay('brightness', this.value)" onchange="setSetting('brightness', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Color <span class="setting-value" id="colorValue">50</span></label>
+                                    <input type="range" id="color" class="slider" min="0" max="100" value="50" oninput="updateSliderDisplay('color', this.value)" onchange="setSetting('color', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Sharpness <span class="setting-value" id="sharpnessValue">10</span></label>
+                                    <input type="range" id="sharpness" class="slider" min="0" max="50" value="10" oninput="updateSliderDisplay('sharpness', this.value)" onchange="setSetting('sharpness', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Tint <span class="setting-value" id="tintValue">0</span></label>
+                                    <input type="range" id="tint" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('tint', this.value)" onchange="setSetting('tint', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Color Temperature <span class="setting-value" id="colorTemperatureValue">0</span></label>
+                                    <input type="range" id="colorTemperature" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('colorTemperature', this.value)" onchange="setSetting('colorTemperature', parseInt(this.value))">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="section">
-                    <h3>Other</h3>
+                <!-- Advanced Section -->
+                <div id="section-advanced" class="content">
+                    <div class="section">
+                        <h2 class="section-title">Advanced Settings</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">Black Level</label>
+                                    <select id="blackLevel" class="select" onchange="setSetting('blackLevel', this.value)">
+                                        <option value="auto">Auto</option>
+                                        <option value="low">Low</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
 
-                    <div class="setting-row">
-                        <label>Energy Saving</label>
-                        <select id="energySaving" onchange="setSetting('energySaving', this.value)">
-                            <option value="off">Off</option>
-                            <option value="min">Minimum</option>
-                            <option value="med">Medium</option>
-                            <option value="max">Maximum</option>
-                            <option value="auto">Auto</option>
-                            <option value="screen_off">Screen Off</option>
-                        </select>
+                                <div class="setting-item">
+                                    <label class="setting-label">Gamma</label>
+                                    <select id="gamma" class="select" onchange="setSetting('gamma', this.value)">
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high1">High 1</option>
+                                        <option value="high2">High 2</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Color Gamut</label>
+                                    <select id="colorGamut" class="select" onchange="setSetting('colorGamut', this.value)">
+                                        <option value="auto">Auto</option>
+                                        <option value="native">Native</option>
+                                        <option value="wide">Wide</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Dynamic Contrast</label>
+                                    <select id="dynamicContrast" class="select" onchange="setSetting('dynamicContrast', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Peak Brightness</label>
+                                    <select id="peakBrightness" class="select" onchange="setSetting('peakBrightness', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Dynamic Color</label>
+                                    <select id="dynamicColor" class="select" onchange="setSetting('dynamicColor', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Super Resolution</label>
+                                    <select id="superResolution" class="select" onchange="setSetting('superResolution', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Noise Reduction</label>
+                                    <select id="noiseReduction" class="select" onchange="setSetting('noiseReduction', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="auto">Auto</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">MPEG Noise Reduction</label>
+                                    <select id="mpegNoiseReduction" class="select" onchange="setSetting('mpegNoiseReduction', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="auto">Auto</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Smooth Gradation</label>
+                                    <select id="smoothGradation" class="select" onchange="setSetting('smoothGradation', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Real Cinema</label>
+                                    <select id="realCinema" class="select" onchange="setSetting('realCinema', this.value)">
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Eye Comfort</label>
+                                    <select id="eyeComfortMode" class="select" onchange="setSetting('eyeComfortMode', this.value)">
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">HDR</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">HDR Tone Mapping</label>
+                                    <select id="hdrDynamicToneMapping" class="select" onchange="setSetting('hdrDynamicToneMapping', this.value)">
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                        <option value="HGIG">HGIG</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">HGIG</label>
+                                    <select id="hgig" class="select" onchange="setSetting('hgig', this.value)">
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Dolby Precision Detail</label>
+                                    <select id="dolbyPrecisionDetail" class="select" onchange="setSetting('dolbyPrecisionDetail', this.value)">
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Black Stabilizer <span class="setting-value" id="blackStabilizerValue">0</span></label>
+                                    <input type="range" id="blackStabilizer" class="slider" min="0" max="20" value="0" oninput="updateSliderDisplay('blackStabilizer', this.value)" onchange="setSetting('blackStabilizer', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">White Stabilizer <span class="setting-value" id="whiteStabilizerValue">0</span></label>
+                                    <input type="range" id="whiteStabilizer" class="slider" min="0" max="20" value="0" oninput="updateSliderDisplay('whiteStabilizer', this.value)" onchange="setSetting('whiteStabilizer', parseInt(this.value))">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">White Balance</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">Color Temperature</label>
+                                    <select id="whiteBalanceColorTemperature" class="select" onchange="setSetting('whiteBalanceColorTemperature', this.value)">
+                                        <option value="cool">Cool</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="warm1">Warm 1</option>
+                                        <option value="warm2">Warm 2</option>
+                                        <option value="warm3">Warm 3</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Point</label>
+                                    <select id="whiteBalancePoint" class="select" onchange="setSetting('whiteBalancePoint', this.value)">
+                                        <option value="low">Low</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Red Offset <span class="setting-value" id="whiteBalanceRedOffsetValue">0</span></label>
+                                    <input type="range" id="whiteBalanceRedOffset" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedOffset', this.value)" onchange="setSetting('whiteBalanceRedOffset', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Green Offset <span class="setting-value" id="whiteBalanceGreenOffsetValue">0</span></label>
+                                    <input type="range" id="whiteBalanceGreenOffset" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenOffset', this.value)" onchange="setSetting('whiteBalanceGreenOffset', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Blue Offset <span class="setting-value" id="whiteBalanceBlueOffsetValue">0</span></label>
+                                    <input type="range" id="whiteBalanceBlueOffset" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueOffset', this.value)" onchange="setSetting('whiteBalanceBlueOffset', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Red Gain <span class="setting-value" id="whiteBalanceRedGainValue">0</span></label>
+                                    <input type="range" id="whiteBalanceRedGain" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceRedGain', this.value)" onchange="setSetting('whiteBalanceRedGain', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Green Gain <span class="setting-value" id="whiteBalanceGreenGainValue">0</span></label>
+                                    <input type="range" id="whiteBalanceGreenGain" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceGreenGain', this.value)" onchange="setSetting('whiteBalanceGreenGain', parseInt(this.value))">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Blue Gain <span class="setting-value" id="whiteBalanceBlueGainValue">0</span></label>
+                                    <input type="range" id="whiteBalanceBlueGain" class="slider" min="-50" max="50" value="0" oninput="updateSliderDisplay('whiteBalanceBlueGain', this.value)" onchange="setSetting('whiteBalanceBlueGain', parseInt(this.value))">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Motion Section -->
+                <div id="section-motion" class="content">
+                    <div class="section">
+                        <h2 class="section-title">Motion Settings</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">TruMotion Mode</label>
+                                    <select id="truMotionMode" class="select" onchange="setSetting('truMotionMode', this.value, true)">
+                                        <option value="off">Off</option>
+                                        <option value="natural">Natural</option>
+                                        <option value="smooth">Smooth</option>
+                                        <option value="clear">Clear</option>
+                                        <option value="cinemaClear">Cinema Clear</option>
+                                        <option value="user">User</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item" id="truMotionBlurRow" style="display:none">
+                                    <label class="setting-label">Blur <span class="setting-value" id="truMotionBlurValue">0</span></label>
+                                    <input type="range" id="truMotionBlur" class="slider" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionBlur', this.value)" onchange="setSetting('truMotionBlur', parseInt(this.value), true)">
+                                </div>
+
+                                <div class="setting-item" id="truMotionJudderRow" style="display:none">
+                                    <label class="setting-label">Judder <span class="setting-value" id="truMotionJudderValue">0</span></label>
+                                    <input type="range" id="truMotionJudder" class="slider" min="0" max="10" value="0" oninput="updateSliderDisplay('truMotionJudder', this.value)" onchange="setSetting('truMotionJudder', parseInt(this.value), true)">
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Motion Eye Care</label>
+                                    <select id="motionEyeCare" class="select" onchange="setSetting('motionEyeCare', this.value)">
+                                        <option value="on">On</option>
+                                        <option value="off">Off</option>
+                                    </select>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">Motion Pro</label>
+                                    <select id="motionProOLED" class="select" onchange="setSetting('motionProOLED', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="auto">Auto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI/Other Section -->
+                <div id="section-ai" class="content">
+                    <div class="section">
+                        <h2 class="section-title">AI Picture</h2>
+                        <div class="card">
+                            <div class="note">
+                                <strong>Note:</strong> AI settings can only be set, not read. Current values cannot be displayed.
+                            </div>
+
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">AI Picture</label>
+                                    <div class="toggle-buttons">
+                                        <button class="btn btn-success btn-sm" onclick="setAISetting('ai_Picture', 'on')">ON</button>
+                                        <button class="btn btn-danger btn-sm" onclick="setAISetting('ai_Picture', 'off')">OFF</button>
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">AI Brightness</label>
+                                    <div class="toggle-buttons">
+                                        <button class="btn btn-success btn-sm" onclick="setAISetting('ai_Brightness', 'on')">ON</button>
+                                        <button class="btn btn-danger btn-sm" onclick="setAISetting('ai_Brightness', 'off')">OFF</button>
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">AI Genre</label>
+                                    <div class="toggle-buttons">
+                                        <button class="btn btn-success btn-sm" onclick="setAISetting('ai_Genre', 'on')">ON</button>
+                                        <button class="btn btn-danger btn-sm" onclick="setAISetting('ai_Genre', 'off')">OFF</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">Other Settings</h2>
+                        <div class="card">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label class="setting-label">Energy Saving</label>
+                                    <select id="energySaving" class="select" onchange="setSetting('energySaving', this.value)">
+                                        <option value="off">Off</option>
+                                        <option value="min">Minimum</option>
+                                        <option value="med">Medium</option>
+                                        <option value="max">Maximum</option>
+                                        <option value="auto">Auto</option>
+                                        <option value="screen_off">Screen Off</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -724,14 +985,9 @@
         let messageId = 0;
         let clientKey = localStorage.getItem('lgTvClientKey') || null;
         let connected = false;
-        let useSecure = true;  // New TVs require wss:// on port 3001
+        let useSecure = true;
         let pendingRefreshRequests = 0;
-        let requestedSettings = {};  // Track which settings we requested per message ID
-
-        // Proxy mode: Set to true if using websocket-proxy.js server
-        // When true, connects to ws://localhost:PROXY_PORT instead of directly to TV
-        const USE_PROXY = false;
-        const PROXY_URL = 'ws://localhost:8765';
+        let requestedSettings = {};
 
         const REGISTRATION_PAYLOAD = {
             "forcePairing": false,
@@ -739,34 +995,16 @@
                 "appVersion": "1.1",
                 "manifestVersion": 1,
                 "permissions": [
-                    "LAUNCH",
-                    "LAUNCH_WEBAPP",
-                    "APP_TO_APP",
-                    "CLOSE",
-                    "TEST_OPEN",
-                    "TEST_PROTECTED",
-                    "CONTROL_AUDIO",
-                    "CONTROL_DISPLAY",
-                    "CONTROL_INPUT_JOYSTICK",
-                    "CONTROL_INPUT_MEDIA_RECORDING",
-                    "CONTROL_INPUT_MEDIA_PLAYBACK",
-                    "CONTROL_INPUT_TV",
-                    "CONTROL_POWER",
-                    "CONTROL_TV_SCREEN",
-                    "READ_APP_STATUS",
-                    "READ_CURRENT_CHANNEL",
-                    "READ_INPUT_DEVICE_LIST",
-                    "READ_NETWORK_STATE",
-                    "READ_RUNNING_APPS",
-                    "READ_TV_CHANNEL_LIST",
-                    "WRITE_NOTIFICATION_TOAST",
-                    "READ_POWER_STATE",
-                    "READ_COUNTRY_INFO",
-                    "CONTROL_INPUT_TEXT",
-                    "CONTROL_MOUSE_AND_KEYBOARD",
-                    "READ_INSTALLED_APPS",
-                    "READ_SETTINGS",
-                    "READ_STORAGE_DEVICE_LIST"
+                    "LAUNCH", "LAUNCH_WEBAPP", "APP_TO_APP", "CLOSE", "TEST_OPEN",
+                    "TEST_PROTECTED", "CONTROL_AUDIO", "CONTROL_DISPLAY",
+                    "CONTROL_INPUT_JOYSTICK", "CONTROL_INPUT_MEDIA_RECORDING",
+                    "CONTROL_INPUT_MEDIA_PLAYBACK", "CONTROL_INPUT_TV",
+                    "CONTROL_POWER", "CONTROL_TV_SCREEN", "READ_APP_STATUS",
+                    "READ_CURRENT_CHANNEL", "READ_INPUT_DEVICE_LIST",
+                    "READ_NETWORK_STATE", "READ_RUNNING_APPS", "READ_TV_CHANNEL_LIST",
+                    "WRITE_NOTIFICATION_TOAST", "READ_POWER_STATE", "READ_COUNTRY_INFO",
+                    "CONTROL_INPUT_TEXT", "CONTROL_MOUSE_AND_KEYBOARD",
+                    "READ_INSTALLED_APPS", "READ_SETTINGS", "READ_STORAGE_DEVICE_LIST"
                 ],
                 "signatures": [{
                     "signature": "eyJhbGdvcml0aG0iOiJSU0EtU0hBMjU2Iiwia2V5SWQiOiJ0ZXN0LXNpZ25pbmctY2VydCIsInNpZ25hdHVyZVZlcnNpb24iOjF9.hrVRgjCwXVvE2OOSpDZ58hR+59aFNwYDyjQgKk3auukd7pcegmE2CzPCa0bJ0ZsRAcKkCTJrWo5iDzNhMBWRyaMOv5zWSrthlf7G128qvIlpMT0YNY+n/FaOHE73uLrS/g7swl3/qH/BGFG2Hu4RlL48eb3lLKqTt2xKHdCs6Cd4RMfJPYnzgvI4BNrFUKsjkcu+WD4OO2A27Pq1n50cMchmcaXadJhGrOqH5YmHdOCj5NSHzJYrsW0HPlpuAx/ECMeIZYDh6RMqaFM2DXzdKX9NmmyqzJ3o/0lkk/N97gfVRLW5hA29yeAwaCViZNCP8iC9aO0q9fQojoa7NQnAtw==",
@@ -775,29 +1013,14 @@
                 "signed": {
                     "appId": "com.lge.test",
                     "created": "20140509",
-                    "localizedAppNames": {
-                        "": "LG Remote App",
-                        "ko-KR": "리모컨 앱",
-                        "zxx-XX": "ЛГ Rэмotэ AПП"
-                    },
+                    "localizedAppNames": {"": "LG Remote App", "ko-KR": "리모컨 앱", "zxx-XX": "ЛГ Rэмotэ AПП"},
                     "localizedVendorNames": {"": "LG Electronics"},
                     "permissions": [
-                        "TEST_SECURE",
-                        "CONTROL_INPUT_TEXT",
-                        "CONTROL_MOUSE_AND_KEYBOARD",
-                        "READ_INSTALLED_APPS",
-                        "READ_LGE_SDX",
-                        "READ_NOTIFICATIONS",
-                        "SEARCH",
-                        "WRITE_SETTINGS",
-                        "WRITE_NOTIFICATION_ALERT",
-                        "CONTROL_POWER",
-                        "READ_CURRENT_CHANNEL",
-                        "READ_RUNNING_APPS",
-                        "READ_UPDATE_INFO",
-                        "UPDATE_FROM_REMOTE_APP",
-                        "READ_LGE_TV_INPUT_EVENTS",
-                        "READ_TV_CURRENT_TIME"
+                        "TEST_SECURE", "CONTROL_INPUT_TEXT", "CONTROL_MOUSE_AND_KEYBOARD",
+                        "READ_INSTALLED_APPS", "READ_LGE_SDX", "READ_NOTIFICATIONS", "SEARCH",
+                        "WRITE_SETTINGS", "WRITE_NOTIFICATION_ALERT", "CONTROL_POWER",
+                        "READ_CURRENT_CHANNEL", "READ_RUNNING_APPS", "READ_UPDATE_INFO",
+                        "UPDATE_FROM_REMOTE_APP", "READ_LGE_TV_INPUT_EVENTS", "READ_TV_CURRENT_TIME"
                     ],
                     "serial": "2f930e2d2cfe083771f68e4fe7bb07",
                     "vendorId": "com.lge"
@@ -809,26 +1032,16 @@
         function showStatus(message, type = 'info') {
             const statusEl = document.getElementById('status');
             statusEl.textContent = message;
-            statusEl.className = `status ${type}`;
+            statusEl.className = `alert ${type}`;
             statusEl.style.display = 'block';
             console.log(`[${type.toUpperCase()}] ${message}`);
         }
 
         function showCertHelp(show) {
-            const certHelp = document.getElementById('certHelp');
-            if (show) {
-                certHelp.classList.add('show');
-            } else {
-                certHelp.classList.remove('show');
-            }
+            document.getElementById('certHelp').style.display = show ? 'block' : 'none';
         }
 
         function openCertPage() {
-            if (USE_PROXY) {
-                showStatus('Certificate not needed when using proxy mode', 'info');
-                return;
-            }
-
             const ip = document.getElementById('tvIp').value.trim();
             if (!ip) {
                 showStatus('Please enter a TV IP address first', 'error');
@@ -843,13 +1056,8 @@
             document.getElementById('connectBtn').disabled = isConnected;
             document.getElementById('disconnectBtn').disabled = !isConnected;
             document.getElementById('tvIp').disabled = isConnected;
-
-            if (isConnected) {
-                document.getElementById('controls').classList.add('active');
-                showCertHelp(false);  // Hide cert help when connected
-            } else {
-                document.getElementById('controls').classList.remove('active');
-            }
+            document.getElementById('controls').style.display = isConnected ? 'block' : 'none';
+            if (isConnected) showCertHelp(false);
         }
 
         function connect() {
@@ -859,41 +1067,19 @@
                 return;
             }
 
-            showCertHelp(false);  // Hide cert help when attempting connection
-
-            let wsUrl;
-            if (USE_PROXY) {
-                wsUrl = PROXY_URL;
-                showStatus('Connecting via proxy server...', 'info');
-                console.log('Connecting via proxy:', wsUrl, '-> TV:', ip);
-            } else {
-                wsUrl = `wss://${ip}:3001`;
-                showStatus('Connecting to TV...', 'info');
-                console.log('Connecting directly to TV:', wsUrl);
-            }
-
+            showCertHelp(false);
+            const wsUrl = `wss://${ip}:3001`;
+            showStatus('Connecting to TV...', 'info');
             ws = new WebSocket(wsUrl);
 
             ws.onopen = () => {
                 console.log('WebSocket connected');
                 showStatus('WebSocket connected, registering...', 'info');
-
-                // If using proxy, send TV IP first
-                if (USE_PROXY) {
-                    ws.send(JSON.stringify({
-                        type: '__PROXY_SET_TV_IP__',
-                        ip: ip
-                    }));
-                    console.log('Sent TV IP to proxy:', ip);
-                }
-
-                // Send registration message
                 const registrationMsg = {
                     "type": "register",
                     "id": "register_0",
                     "payload": clientKey ? {...REGISTRATION_PAYLOAD, "client-key": clientKey} : REGISTRATION_PAYLOAD
                 };
-
                 console.log('Sending registration:', registrationMsg);
                 ws.send(JSON.stringify(registrationMsg));
             };
@@ -908,65 +1094,44 @@
                     }
                 } else if (message.type === 'registered') {
                     clientKey = message.payload['client-key'];
-                    // Save client key for future connections
                     localStorage.setItem('lgTvClientKey', clientKey);
                     console.log('Registered! Client key:', clientKey);
                     showStatus('Connected successfully!', 'success');
                     updateUI(true);
-
-                    // Refresh all settings
                     refreshAllSettings();
                 } else if (message.type === 'response') {
-                    // Handle alert responses (Luna API hack)
                     if (message.id.startsWith('alert_') && message.payload && message.payload.alertId) {
                         const alertId = message.payload.alertId;
                         console.log(`Alert created with ID: ${alertId}, closing it...`);
-
-                        // Close the alert immediately
                         messageId++;
                         ws.send(JSON.stringify({
                             "id": `close_alert_${messageId}`,
                             "type": "request",
                             "uri": "ssap://system.notifications/closeAlert",
-                            "payload": {
-                                "alertId": alertId
-                            }
+                            "payload": {"alertId": alertId}
                         }));
-
                         showStatus('AI setting applied successfully', 'success');
                         return;
                     }
 
-                    // Handle response messages
                     if (message.payload && message.payload.settings) {
                         updateSettingsUI(message.payload.settings);
-
-                        // Show success message for set operations only
                         if (message.id.startsWith('set_')) {
                             showStatus('Setting applied successfully', 'success');
                         } else if (message.id.startsWith('get_')) {
-                            // Check which requested settings were NOT returned and grey them out
                             const requestedKeys = requestedSettings[message.id] || [];
                             const returnedKeys = Object.keys(message.payload.settings);
                             const missingKeys = requestedKeys.filter(key => !returnedKeys.includes(key));
 
-                            // Detailed logging for diagnostics
                             console.group(`📥 GET Response: ${message.id}`);
-                            console.log('Category:', message.payload.category);
                             console.log('Requested:', requestedKeys);
                             console.log('Returned:', returnedKeys);
                             if (missingKeys.length > 0) {
                                 console.warn('⚠️ Missing keys:', missingKeys);
-                            }
-                            console.log('Values:', message.payload.settings);
-                            console.log('Full response:', message);
-                            console.groupEnd();
-
-                            if (missingKeys.length > 0) {
                                 missingKeys.forEach(key => markSettingUnavailable(key));
                             }
+                            console.groupEnd();
 
-                            // Track refresh completion
                             if (pendingRefreshRequests > 0) {
                                 pendingRefreshRequests--;
                                 if (pendingRefreshRequests === 0) {
@@ -976,197 +1141,7 @@
                         }
                     }
                 } else if (message.type === 'error') {
-                    // Handle errors gracefully - some settings may not be available on all TV models
-                    if (message.id.startsWith('get_')) {
-                        // Parse which keys failed and mark them as unavailable
-                        const errorText = message.payload?.errorText || message.error || '';
-
-                        console.group(`❌ GET Error: ${message.id}`);
-                        console.log('Error text:', errorText);
-                        console.log('Requested keys:', requestedSettings[message.id] || []);
-                        console.log('Full error payload:', message.payload);
-                        console.log('Full error message:', message);
-
-                        if (errorText.includes('not allowed') || errorText.includes('not available') || errorText.includes("doesn't support")) {
-                            // Extract which specific key(s) failed from the error message
-                            const failedKeys = [];
-
-                            // Pattern 1: "Some keys are not allowed for the request. ( keyName )"
-                            const pattern1 = /\(\s*([^)]+)\s*\)/;
-                            const match1 = errorText.match(pattern1);
-                            if (match1) {
-                                failedKeys.push(match1[1].trim());
-                            }
-
-                            // Pattern 2: "doesn't support the key(s): key1,key2,key3"
-                            // Fixed: match after colon, not including "key(s):"
-                            const pattern2 = /key\(s\):\s*(.+)$/;
-                            const match2 = errorText.match(pattern2);
-                            if (match2) {
-                                const keys = match2[1].split(',').map(k => k.trim()).filter(k => k.length > 1);
-                                failedKeys.push(...keys);
-                            }
-
-                            console.log('Parsed failed keys:', failedKeys);
-
-                            if (failedKeys.length > 0) {
-                                console.log(`✓ Marking failed keys unavailable:`, failedKeys);
-                                failedKeys.forEach(key => markSettingUnavailable(key));
-
-                                // Retry the successful keys from this batch
-                                const requestedKeys = requestedSettings[message.id] || [];
-                                const successfulKeys = requestedKeys.filter(key => !failedKeys.includes(key));
-
-                                if (successfulKeys.length > 0) {
-                                    console.log(`🔄 Retrying ${successfulKeys.length} keys:`, successfulKeys);
-                                    console.groupEnd();
-
-                                    messageId++;
-                                    const retryId = `${message.id}_retry_${messageId}`;
-                                    requestedSettings[retryId] = successfulKeys;
-
-                                    // Determine category from original message ID
-                                    let category = 'picture';
-                                    if (message.id.includes('_ai_')) {
-                                        category = 'aiPicture';
-                                    }
-
-                                    const retryRequest = {
-                                        "id": retryId,
-                                        "type": "request",
-                                        "uri": "ssap://settings/getSystemSettings",
-                                        "payload": {
-                                            "category": category,
-                                            "keys": successfulKeys
-                                        }
-                                    };
-
-                                    // Add current_app for truMotionMode only
-                                    if (message.id.includes('_trumotion_') || successfulKeys.includes('truMotionMode')) {
-                                        retryRequest.payload.current_app = true;
-                                    }
-
-                                    console.log(`📤 Sending retry request (category: ${category}):`, retryRequest);
-                                    ws.send(JSON.stringify(retryRequest));
-                                    // Don't decrement pendingRefreshRequests yet, wait for retry
-                                    return;
-                                } else {
-                                    console.log('✓ No keys to retry');
-                                    console.groupEnd();
-                                }
-                            } else {
-                                // Couldn't parse error, try individual requests for each key
-                                const requestedKeys = requestedSettings[message.id] || [];
-                                console.warn(`⚠️ Could not parse specific failed keys`);
-                                console.log(`🔄 Trying each of ${requestedKeys.length} keys individually`);
-                                console.groupEnd();
-
-                                // Try each key individually to see which ones work
-                                requestedKeys.forEach(key => {
-                                    messageId++;
-                                    const individualId = `${message.id}_individual_${key}_${messageId}`;
-                                    requestedSettings[individualId] = [key];
-
-                                    let category = 'picture';
-                                    if (message.id.includes('_ai_')) {
-                                        category = 'aiPicture';
-                                    }
-
-                                    const individualRequest = {
-                                        "id": individualId,
-                                        "type": "request",
-                                        "uri": "ssap://settings/getSystemSettings",
-                                        "payload": {
-                                            "category": category,
-                                            "keys": [key]
-                                        }
-                                    };
-
-                                    // Add current_app for truMotionMode only
-                                    if (message.id.includes('_trumotion_') || key === 'truMotionMode') {
-                                        individualRequest.payload.current_app = true;
-                                    }
-
-                                    ws.send(JSON.stringify(individualRequest));
-                                });
-                                // Don't decrement pendingRefreshRequests yet, wait for individual responses
-                                return;
-                            }
-                        } else {
-                            // Generic error with no specific key info - try each key individually
-                            const requestedKeys = requestedSettings[message.id] || [];
-
-                            // Only try individual requests if we haven't already (avoid infinite retry loops)
-                            if (requestedKeys.length > 1 && !message.id.includes('_individual_')) {
-                                console.warn(`⚠️ Generic error - trying ${requestedKeys.length} keys individually`);
-                                console.groupEnd();
-
-                                // Try each key individually to see which ones work
-                                requestedKeys.forEach(key => {
-                                    messageId++;
-                                    const individualId = `${message.id}_individual_${key}_${messageId}`;
-                                    requestedSettings[individualId] = [key];
-
-                                    let category = 'picture';
-                                    if (message.id.includes('_ai_')) {
-                                        category = 'aiPicture';
-                                    }
-
-                                    const individualRequest = {
-                                        "id": individualId,
-                                        "type": "request",
-                                        "uri": "ssap://settings/getSystemSettings",
-                                        "payload": {
-                                            "category": category,
-                                            "keys": [key]
-                                        }
-                                    };
-
-                                    // Add current_app for truMotionMode only
-                                    if (message.id.includes('_trumotion_') || key === 'truMotionMode') {
-                                        individualRequest.payload.current_app = true;
-                                    }
-
-                                    console.log(`📤 Trying individual key (${category}):`, individualRequest);
-                                    ws.send(JSON.stringify(individualRequest));
-                                });
-                                // Don't decrement pendingRefreshRequests yet, wait for individual responses
-                                return;
-                            } else {
-                                // Already tried individually or single key - mark as unavailable
-                                console.log('⚠️ Generic error (marking unavailable - already tried individually)');
-                                console.log('Affected keys:', requestedKeys);
-                                requestedKeys.forEach(key => markSettingUnavailable(key));
-                                console.groupEnd();
-                            }
-                        }
-
-                        // Track refresh completion even on error
-                        if (pendingRefreshRequests > 0) {
-                            pendingRefreshRequests--;
-                            if (pendingRefreshRequests === 0) {
-                                showStatus('Settings loaded (some not available on this TV)', 'success');
-                            }
-                        }
-                    } else if (message.id.startsWith('set_')) {
-                        // Check if it's a "not allowed" error (setting doesn't exist)
-                        const errorText = message.payload?.errorText || message.error || '';
-                        if (errorText.includes('not allowed') || errorText.includes('not available')) {
-                            // Extract setting name from message ID (format: set_settingName_messageId)
-                            const settingName = message.id.replace(/^set_/, '').replace(/_\d+$/, '');
-                            console.log(`Setting not available on this TV: ${settingName}`);
-
-                            // Mark as unavailable in UI
-                            markSettingUnavailable(settingName);
-                        } else {
-                            // Show other errors (invalid values, etc.)
-                            showStatus(`Error: ${errorText}`, 'error');
-                        }
-                    } else {
-                        // Other errors
-                        showStatus(`Error: ${message.error}`, 'error');
-                        console.error('TV error:', message);
-                    }
+                    handleError(message);
                 }
             };
 
@@ -1178,26 +1153,40 @@
 
             ws.onclose = (event) => {
                 console.log('WebSocket closed', event);
-
                 if (!connected && event.code !== 1000) {
-                    // Check for invalid origin error (code 1008)
-                    if (event.code === 1008 && event.reason === 'invalid origin') {
-                        // Clear saved client key and try to help user
-                        clientKey = null;
-                        localStorage.removeItem('lgTvClientKey');
-                        showStatus('Connection rejected by TV (invalid origin). Try opening this file from a local web server, or clear your TV\'s registered apps list.', 'error');
-                    } else {
-                        // Connection failed before establishing
-                        showStatus('Connection failed. You may need to accept the SSL certificate first.', 'error');
-                        showCertHelp(true);
-                    }
+                    showStatus('Connection failed. You may need to accept the SSL certificate first.', 'error');
+                    showCertHelp(true);
                 } else if (connected) {
                     showStatus('Disconnected from TV', 'info');
                 }
-
                 updateUI(false);
                 ws = null;
             };
+        }
+
+        function handleError(message) {
+            if (message.id.startsWith('get_')) {
+                const requestedKeys = requestedSettings[message.id] || [];
+                console.group(`❌ GET Error: ${message.id}`);
+                console.log('Requested keys:', requestedKeys);
+                console.groupEnd();
+                requestedKeys.forEach(key => markSettingUnavailable(key));
+
+                if (pendingRefreshRequests > 0) {
+                    pendingRefreshRequests--;
+                    if (pendingRefreshRequests === 0) {
+                        showStatus('Settings loaded (some not available on this TV)', 'success');
+                    }
+                }
+            } else if (message.id.startsWith('set_')) {
+                const errorText = message.payload?.errorText || message.error || '';
+                if (errorText.includes('not allowed') || errorText.includes('not available')) {
+                    const settingName = message.id.replace(/^set_/, '').replace(/_\d+$/, '');
+                    markSettingUnavailable(settingName);
+                } else {
+                    showStatus(`Error: ${errorText}`, 'error');
+                }
+            }
         }
 
         function disconnect() {
@@ -1215,22 +1204,22 @@
             showStatus('Saved client key cleared. Try connecting again.', 'info');
         }
 
-        // Tab switching
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // Show selected tab
-            document.getElementById(`tab-${tabName}`).classList.add('active');
+        function showSection(section) {
+            document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+            document.getElementById('section-' + section).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             event.target.classList.add('active');
+            document.getElementById('mobileMenu').classList.remove('active');
+            document.querySelector('.hamburger').classList.remove('active');
         }
 
-        // Generic setting function
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const hamburger = document.querySelector('.hamburger');
+            menu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+
         function setSetting(settingName, value, currentApp = false) {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
@@ -1242,7 +1231,6 @@
                 "category": "picture",
                 "settings": {}
             };
-            // Convert all values to strings to match Python library behavior
             payload.settings[settingName] = String(value);
 
             if (currentApp) {
@@ -1260,7 +1248,6 @@
             ws.send(JSON.stringify(message));
             showStatus(`Setting ${settingName}...`, 'info');
 
-            // Handle TruMotion mode changes
             if (settingName === 'truMotionMode') {
                 const blurRow = document.getElementById('truMotionBlurRow');
                 const judderRow = document.getElementById('truMotionJudderRow');
@@ -1274,22 +1261,17 @@
             }
         }
 
-        // Mark a setting as unavailable in the UI
         function markSettingUnavailable(settingName) {
             const element = document.getElementById(settingName);
             if (element) {
-                // Disable the control
                 element.disabled = true;
-
-                // Mark the row as unavailable
-                const row = element.closest('.setting-row');
+                const row = element.closest('.setting-item');
                 if (row) {
                     row.classList.add('unavailable');
                 }
             }
         }
 
-        // AI settings (use alert hack to access Luna API like Python library)
         function setAISetting(settingName, value) {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
@@ -1297,36 +1279,22 @@
             }
 
             messageId++;
-
-            // Prepare Luna API parameters
             const lunaParams = {
                 "category": "aiPicture",
                 "settings": {}
             };
             lunaParams.settings[settingName] = value;
 
-            // Luna URI for the alert hack
             const lunaUri = "luna://com.webos.settingsservice/setSystemSettings";
-
-            // Create alert with Luna API call in onClick/onclose/onfail
-            // This is the same hack used by the Python library
             const alertPayload = {
                 "message": " ",
-                "buttons": [
-                    {
-                        "label": "",
-                        "onClick": lunaUri,
-                        "params": lunaParams
-                    }
-                ],
-                "onclose": {
-                    "uri": lunaUri,
+                "buttons": [{
+                    "label": "",
+                    "onClick": lunaUri,
                     "params": lunaParams
-                },
-                "onfail": {
-                    "uri": lunaUri,
-                    "params": lunaParams
-                }
+                }],
+                "onclose": {"uri": lunaUri, "params": lunaParams},
+                "onfail": {"uri": lunaUri, "params": lunaParams}
             };
 
             const createAlertMsg = {
@@ -1338,24 +1306,18 @@
 
             console.log(`Setting AI ${settingName} to ${value} via Luna alert hack:`, createAlertMsg);
             ws.send(JSON.stringify(createAlertMsg));
-
-            // Close the alert immediately after creating it
-            // We'll get the alertId from the response and close it
             showStatus(`Setting ${settingName}...`, 'info');
         }
 
-        // Picture mode setting
         function setPictureMode(mode) {
             if (!mode) return;
             setSetting('pictureMode', mode);
         }
 
-        // Update slider display
         function updateSliderDisplay(settingName, value) {
             document.getElementById(`${settingName}Value`).textContent = value;
         }
 
-        // Refresh all settings (split into chunks to avoid overwhelming TV)
         function refreshAllSettings() {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
                 showStatus('Not connected to TV', 'error');
@@ -1363,145 +1325,45 @@
             }
 
             showStatus('Refreshing settings...', 'info');
-            pendingRefreshRequests = 7;  // Number of refresh requests we're about to send
-            requestedSettings = {};  // Clear previous tracking
+            pendingRefreshRequests = 7;
+            requestedSettings = {};
 
-            // Basic settings
-            messageId++;
-            const basicKeys = ["pictureMode", "backlight", "contrast", "brightness", "color", "tint", "sharpness", "colorTemperature"];
-            requestedSettings[`get_basic_${messageId}`] = basicKeys;
-            ws.send(JSON.stringify({
-                "id": `get_basic_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
+            const requests = [
+                {id: 'basic', keys: ["pictureMode", "backlight", "contrast", "brightness", "color", "tint", "sharpness", "colorTemperature"]},
+                {id: 'advanced', keys: ["blackLevel", "gamma", "colorGamut", "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution"]},
+                {id: 'nr', keys: ["noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema", "eyeComfortMode", "energySaving"]},
+                {id: 'hdr', keys: ["hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail", "blackStabilizer", "whiteStabilizer"]},
+                {id: 'wb', keys: ["whiteBalanceColorTemperature", "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset", "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain", "whiteBalanceBlueGain"]},
+                {id: 'trumotion', keys: ["truMotionMode"], currentApp: true},
+                {id: 'motion', keys: ["truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"]}
+            ];
+
+            requests.forEach(req => {
+                messageId++;
+                const msgId = `get_${req.id}_${messageId}`;
+                requestedSettings[msgId] = req.keys;
+                const payload = {
                     "category": "picture",
-                    "keys": basicKeys
-                }
-            }));
+                    "keys": req.keys
+                };
+                if (req.currentApp) payload.current_app = true;
 
-            // Advanced picture settings
-            messageId++;
-            const advancedKeys = ["blackLevel", "gamma", "colorGamut", "dynamicContrast", "peakBrightness", "dynamicColor", "superResolution"];
-            requestedSettings[`get_advanced_${messageId}`] = advancedKeys;
-            ws.send(JSON.stringify({
-                "id": `get_advanced_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": advancedKeys
-                }
-            }));
-
-            // Noise reduction & other
-            messageId++;
-            const nrKeys = ["noiseReduction", "mpegNoiseReduction", "smoothGradation", "realCinema", "eyeComfortMode", "energySaving"];
-            requestedSettings[`get_nr_${messageId}`] = nrKeys;
-            ws.send(JSON.stringify({
-                "id": `get_nr_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": nrKeys
-                }
-            }));
-
-            // HDR & gaming settings
-            messageId++;
-            const hdrKeys = ["hdrDynamicToneMapping", "hgig", "dolbyPrecisionDetail", "blackStabilizer", "whiteStabilizer"];
-            requestedSettings[`get_hdr_${messageId}`] = hdrKeys;
-            ws.send(JSON.stringify({
-                "id": `get_hdr_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": hdrKeys
-                }
-            }));
-
-            // White balance settings
-            messageId++;
-            const wbKeys = ["whiteBalanceColorTemperature", "whiteBalancePoint", "whiteBalanceRedOffset", "whiteBalanceGreenOffset", "whiteBalanceBlueOffset", "whiteBalanceRedGain", "whiteBalanceGreenGain", "whiteBalanceBlueGain"];
-            requestedSettings[`get_wb_${messageId}`] = wbKeys;
-            ws.send(JSON.stringify({
-                "id": `get_wb_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": wbKeys
-                }
-            }));
-
-            // Motion settings - split into two requests
-            // 1. truMotionMode requires current_app parameter
-            messageId++;
-            requestedSettings[`get_trumotion_${messageId}`] = ["truMotionMode"];
-            const truMotionRequest = {
-                "id": `get_trumotion_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": ["truMotionMode"],
-                    "current_app": true  // Required for truMotionMode
-                }
-            };
-            console.log(`📤 Requesting truMotionMode with current_app=true:`, truMotionRequest);
-            ws.send(JSON.stringify(truMotionRequest));
-
-            // 2. Other motion settings WITHOUT current_app
-            messageId++;
-            const otherMotionKeys = ["truMotionBlur", "truMotionJudder", "motionEyeCare", "motionProOLED"];
-            requestedSettings[`get_motion_${messageId}`] = otherMotionKeys;
-            const motionRequest = {
-                "id": `get_motion_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "picture",
-                    "keys": otherMotionKeys
-                }
-            };
-            console.log(`📤 Requesting other motion settings (no current_app):`, motionRequest);
-            ws.send(JSON.stringify(motionRequest));
-
-            // AI settings - NOTE: Python library only shows SET operations for AI settings,
-            // never GET. This suggests AI settings may not be readable via the API.
-            // Commenting out for now since they always fail with "doesn't support the key(s)"
-            /*
-            messageId++;
-            const aiKeys = ["ai_Picture", "ai_Brightness", "ai_Genre"];
-            requestedSettings[`get_ai_${messageId}`] = aiKeys;
-            ws.send(JSON.stringify({
-                "id": `get_ai_${messageId}`,
-                "type": "request",
-                "uri": "ssap://settings/getSystemSettings",
-                "payload": {
-                    "category": "aiPicture",
-                    "keys": aiKeys
-                }
-            }));
-            */
+                ws.send(JSON.stringify({
+                    "id": msgId,
+                    "type": "request",
+                    "uri": "ssap://settings/getSystemSettings",
+                    "payload": payload
+                }));
+            });
         }
 
-        // Update UI with received settings
         function updateSettingsUI(settings) {
             for (let [key, value] of Object.entries(settings)) {
-                // Handle special case: blackLevel sometimes returns an object with TV standards
                 if (key === 'blackLevel' && typeof value === 'object' && value !== null) {
-                    // Extract unique values from the object
                     const uniqueValues = [...new Set(Object.values(value))];
                     if (uniqueValues.length === 1) {
-                        // All standards have the same value, use it
                         value = uniqueValues[0];
-                        console.log(`blackLevel object normalized to: ${value}`);
                     } else {
-                        // Different values per standard, can't display in simple dropdown
-                        console.warn(`blackLevel has multiple values per TV standard:`, value);
                         markSettingUnavailable(key);
                         continue;
                     }
@@ -1509,31 +1371,22 @@
 
                 const element = document.getElementById(key);
                 if (element) {
-                    // Successfully retrieved - ensure it's enabled
                     element.disabled = false;
-                    const row = element.closest('.setting-row');
-                    if (row) {
-                        row.classList.remove('unavailable');
-                    }
+                    const row = element.closest('.setting-item');
+                    if (row) row.classList.remove('unavailable');
 
                     if (element.type === 'range') {
                         element.value = value;
                         updateSliderDisplay(key, value);
                     } else if (element.tagName === 'SELECT') {
-                        // Check if the value exists in the dropdown options
                         const optionExists = Array.from(element.options).some(opt => opt.value === value);
                         if (optionExists) {
                             element.value = value;
-                        } else {
-                            console.warn(`Setting ${key}: value "${value}" not found in dropdown options`, Array.from(element.options).map(o => o.value));
                         }
                     }
-                } else {
-                    console.warn(`Setting ${key}: element not found in HTML`);
                 }
             }
 
-            // Handle TruMotion visibility
             if (settings.truMotionMode) {
                 const blurRow = document.getElementById('truMotionBlurRow');
                 const judderRow = document.getElementById('truMotionJudderRow');
@@ -1545,13 +1398,6 @@
                     judderRow.style.display = 'none';
                 }
             }
-        }
-
-        // Grey out settings that failed to retrieve
-        function markSettingsUnavailableFromKeys(keys) {
-            keys.forEach(key => {
-                markSettingUnavailable(key);
-            });
         }
     </script>
 </body>
